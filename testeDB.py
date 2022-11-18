@@ -3,19 +3,21 @@ from xml.etree.ElementTree import tostring
 import psycopg2
 import os
 import numpy as np
-from numpy import * 
+from numpy import *
 import time
 
 os.system('cls' if os.name == 'nt' else 'clear')
 
-class DB(object):
-   _db=None
 
-   def __init__(self, url, username, password, con):
-    self.url = "db.fe.up.pt"
-    self.username = "up201801019"
-    self.password = "CR6oJPBwF"
-    self.con = None
+class DB(object):
+    _db = None
+
+    def __init__(self, url, username, password, con):
+        self.url = "db.fe.up.pt"
+        self.username = "up201801019"
+        self.password = "CR6oJPBwF"
+        self.con = None
+
 
 def connect(db):
     """ Connect to the PostgreSQL database server """
@@ -23,27 +25,26 @@ def connect(db):
     conn = None
     try:
 
-
         # connect to the PostgreSQL server
         print('Connecting to the PostgreSQL database...')
-        conn = psycopg2.connect(host=db.url,database=db.username, user=db.username, password=db.password,port="5432")
+        conn = psycopg2.connect(host=db.url, database=db.username, user=db.username, password=db.password, port="5432")
 
         # create a cursor
         cur = conn.cursor()
-        
-	# execute a statement
+
+        # execute a statement
         print('PostgreSQL database version:')
         cur.execute('SELECT version()')
 
         # display the PostgreSQL database server version
         db_version = cur.fetchone()
         print(db_version)
-    
-        #cur.close()
+
+        # cur.close()
         return cur, conn
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
-	# close the communication with the PostgreSQL
+    # close the communication with the PostgreSQL
     '''
     finally:
         if conn is not None:
@@ -54,26 +55,40 @@ def connect(db):
 
 def identificacao(db, contentorId):
     pedido = 'Select * from up201801019.contentor where contentorid=' + contentorId
-    executar(db,pedido)
+    executar(db, pedido)
     rec = db.fetchone()
     if rec == None:
         print("Não foi encontrado o pedido na DB")
         return None, None
     return rec[1], rec[2]
 
+
 def executar(db, pedido):
     try:
-       result = db.execute(pedido)
-       return result
+        result = db.execute(pedido)
+        return result
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
         return
 
+def executequery(cursor, connection, query):
+    try:
+        cursor.execute(query)
+        connection.commit()
+
+        count = cursor.rowcount
+        return count
+
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+        return
+
+
 def get_value_sensores(db, contentorId):
     pedido = 'Select * from up201801019.sensor where contentorid=' + contentorId
-    executar(db,pedido)
+    executar(db, pedido)
     rec = db.fetchone()
-    
+
     if rec == None:
         print("Não foi encontrado o pedido na DB")
         return None, None
@@ -87,22 +102,24 @@ def get_value_sensores(db, contentorId):
         valores.append(rec[2])
     return tipo, valores
 
-def get_specific_value_sensor(db, contentorId, tipe,sensid):
+
+def get_specific_value_sensor(db, contentorId, tipe, sensid):
     if sensid == None:
-        pedido = "Select * from up201801019.sensor where contentorid=" + contentorId + " and tipo='"  + tipe + "'"
-    else: 
-         pedido = "Select * from up201801019.sensor where contentorid=" + contentorId + " and sensid='"  + sensid + "'"
-    executar(db,pedido)
+        pedido = "Select * from up201801019.sensor where contentorid=" + contentorId + " and tipo='" + tipe + "'"
+    else:
+        pedido = "Select * from up201801019.sensor where contentorid=" + contentorId + " and sensid='" + sensid + "'"
+    executar(db, pedido)
     rec = db.fetchone()[2]
     if rec == None:
         print("Não foi encontrado o pedido na DB")
         return None
-    
+
     return rec
+
 
 def get_value_atuadores(db, contentorId):
     pedido = 'Select * from up201801019.atuador where contentorid=' + contentorId
-    executar(db,pedido)
+    executar(db, pedido)
     rec = db.fetchone()
     if rec == None:
         print("Não foi encontrado o pedido na DB")
@@ -117,45 +134,93 @@ def get_value_atuadores(db, contentorId):
         valores.append(rec[2])
     return tipo, valores
 
-def get_specific_value_atuador(db, contentorId, tipe,atuadorid):
+
+def get_specific_value_atuador(db, contentorId, tipe, atuadorid):
     if atuadorid == None:
-        pedido = "Select * from up201801019.atuador where contentorid=" + contentorId + " and tipo='"  + tipe + "'"
-    else: 
-         pedido = "Select * from up201801019.atuador where contentorid=" + contentorId + " and atuadid='"  + atuadorid + "'"
-    executar(db,pedido)
+        pedido = "Select * from up201801019.atuador where contentorid=" + contentorId + " and tipo='" + tipe + "'"
+    else:
+        pedido = "Select * from up201801019.atuador where contentorid=" + contentorId + " and atuadid='" + atuadorid + "'"
+    executar(db, pedido)
     rec = db.fetchone()[2]
     if rec == None:
         print("Não foi encontrado o pedido na DB")
         return None
-    
+
     return rec
 
 
+def send_values_sensores(db, connection, contentorId, tipo, valor_atual):
+    for i in range(len(tipo)):
+        pedido = "Update up201801019.sensor SET valor_atual = " + str(
+            valor_atual[i]) + " where contentorid=' " + contentorId + "' and tipo='" + tipo[i] + "'"
+        print(pedido)
+        executequery(db, connection, pedido)
+    # rec = db.fetchone()
+    # if rec == None:
+    #   print("Não foi encontrado o pedido na DB")
+    #  return -1
+
+    return 1
+
+def set_value_sensor(db, connection, sensid, tempo, valor):
+
+    query = "INSERT INTO up201801019.historico_sensor(data_hora, medição, sensID) VALUES ('"+ tempo +"'," + str(valor) + ", " + str(sensid) +");"
+    print(query)
+    result = executequery(db, connection, query)
+
+    query = "UPDATE up201801019.sensor SET valor_atual = "+ str(valor) + " WHERE sensid = " + str(sensid) + ";"
+    print
+    result = executequery(db, connection, query)
+
+    return result
+
+def set_value_atuador(db, connection, atuadorid, tempo, valor):
+
+    query = "INSERT INTO up201801019.historico_atuador(data_hora, estado, atuadID) VALUES ('"+ tempo + "',"+ str(valor) +" ," + str(atuadorid) +");"
+    print(query)
+    result = executequery(db, connection, query)
+
+    query = "UPDATE up201801019.atuador SET valor_atual = "+ str(valor) + " WHERE atuadid = " + str(atuadorid) + ";"
+    result = executequery(db, connection, query)
+
+    return result
+
+def add_alarm(db, connection, contentorid, tempo, prioridade, texto):
+
+    query = "INSERT INTO up201801019.alarme(data_hora, prioridade, descrição, contentorid) VALUES ('"+ tempo + "',"+ str(prioridade) +" ," + texto +", "+ str(contentorid) + ");"
+    print(query)
+    result = executequery(db, connection, query)
+
+    return result
 
 
 contentorId = '1'
-while(1):
-    db_con, connection=connect(DB(None,None,None,None))
+while (1):
+    db_con, connection = connect(DB(None, None, None, None))
     fruta, utilizadorid = identificacao(db_con, contentorId)
     print(fruta, utilizadorid)
 
-    tipo, valor = get_value_sensores(db_con, contentorId)
-    print(tipo, valor)
+    tipo1, valor1 = get_value_sensores(db_con, contentorId)
+
+    print(tipo1, valor1)
 
     valor = get_specific_value_sensor(db_con, contentorId, 'temperatura', None)
-    print( valor)
+    print(valor)
 
     tipo, valor = get_value_atuadores(db_con, contentorId)
     print(tipo, valor)
 
     valor = get_specific_value_atuador(db_con, contentorId, 'Exaustor', None)
-    print( valor)
-        
+    print(valor)
+
+    # send_values_sensores(db_con, contentorId, tipo1, valor1)
+    set_value_sensor(db_con, connection, 6, "2022-11-20 17:17:00", 90)
+    set_value_atuador(db_con, connection, 6, "2022-11-20 17:17:00", 0)
+
     if connection is not None:
-            connection.close()
-            print('Database connection closed.')
+        connection.close()
+        print('Database connection closed.')
 
     time.sleep(1)
 
-#for row in db_con: 
-#    print("\n", row)
+
