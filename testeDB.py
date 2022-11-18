@@ -187,7 +187,7 @@ def set_value_atuador(db, connection, atuadorid, tempo, valor):
 
 def add_alarm(db, connection, contentorid, tempo, prioridade, texto):
 
-    query = "INSERT INTO up201801019.alarme(data_hora, prioridade, descrição, contentorid) VALUES ('"+ tempo + "',"+ str(prioridade) +" ," + texto +", "+ str(contentorid) + ");"
+    query = "INSERT INTO up201801019.alarme(data_hora, prioridade, descrição, contentorid) VALUES ('"+ tempo + "',"+ str(prioridade) +" ,'" + texto +"', "+ str(contentorid) + ");"
     print(query)
     result = executequery(db, connection, query)
 
@@ -213,9 +213,11 @@ while (1):
     valor = get_specific_value_atuador(db_con, contentorId, 'Exaustor', None)
     print(valor)
 
-    # send_values_sensores(db_con, contentorId, tipo1, valor1)
+    send_values_sensores(db_con, connection, contentorId, tipo1, valor1)
     set_value_sensor(db_con, connection, 6, "2022-11-20 17:17:00", 90)
     set_value_atuador(db_con, connection, 6, "2022-11-20 17:17:00", 0)
+
+    add_alarm(db_con, connection, 1, "2022-11-20 17:17:00", 5, "Ta pegando fogo")
 
     if connection is not None:
         connection.close()
