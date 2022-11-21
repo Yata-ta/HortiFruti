@@ -1,3 +1,5 @@
+#               Dependencias
+
 from sqlite3 import dbapi2
 from xml.etree.ElementTree import tostring
 import psycopg2
@@ -5,9 +7,12 @@ import os
 import numpy as np
 from numpy import *
 import time
+from time import gmtime, strftime
 
+            # limpar terminal
 os.system('cls' if os.name == 'nt' else 'clear')
 
+#           CLASSE COM INFO SOBRE A BASE DADOS
 
 class DB(object):
     _db = None
@@ -18,6 +23,8 @@ class DB(object):
         self.password = "CR6oJPBwF"
         self.con = None
 
+
+#               FAZ A CONECÇÃO COM A BASE DADOS
 
 def connect(db):
     """ Connect to the PostgreSQL database server """
@@ -52,6 +59,7 @@ def connect(db):
             print('Database connection closed.')
     '''
 
+#               OBTER IDENTIFICAÇÃO DO CONTENTOR (FRUTA E UTILIZADORID)
 
 def identificacao(db, contentorId):
     pedido = 'Select * from up201801019.contentor where contentorid=' + contentorId
@@ -63,6 +71,9 @@ def identificacao(db, contentorId):
     return rec[1], rec[2]
 
 
+#               EXECUTA O PEDIDO (NUNO)
+
+
 def executar(db, pedido):
     try:
         result = db.execute(pedido)
@@ -70,6 +81,9 @@ def executar(db, pedido):
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
         return
+
+
+#               EXECUTA O PEDIDO (VITOR)        comentario: pq usaste outra função de executar a query quando ja tinha definido em cima?? xddd
 
 def executequery(cursor, connection, query):
     try:
@@ -82,6 +96,9 @@ def executequery(cursor, connection, query):
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
         return
+
+
+#               OBTER VALOR DE TODOS SENSORES DO CONTENTOR
 
 
 def get_value_sensores(db, contentorId):
@@ -103,6 +120,9 @@ def get_value_sensores(db, contentorId):
     return tipo, valores
 
 
+#               OBTER VALOR DE SENSOR INDIVIDUAL: IDENTIFICACAO POR ID OU TIPO
+
+
 def get_specific_value_sensor(db, contentorId, tipe, sensid):
     if sensid == None:
         pedido = "Select * from up201801019.sensor where contentorid=" + contentorId + " and tipo='" + tipe + "'"
@@ -116,6 +136,8 @@ def get_specific_value_sensor(db, contentorId, tipe, sensid):
 
     return rec
 
+
+#               OBTER VALOR DE TODOS ATUADORES DO CONTENTOR
 
 def get_value_atuadores(db, contentorId):
     pedido = 'Select * from up201801019.atuador where contentorid=' + contentorId
@@ -135,6 +157,9 @@ def get_value_atuadores(db, contentorId):
     return tipo, valores
 
 
+#               OBTER VALOR DE ATUADOR INDIVIDUAL: IDENTIFICACAO POR ID OU TIPO
+
+
 def get_specific_value_atuador(db, contentorId, tipe, atuadorid):
     if atuadorid == None:
         pedido = "Select * from up201801019.atuador where contentorid=" + contentorId + " and tipo='" + tipe + "'"
@@ -149,18 +174,24 @@ def get_specific_value_atuador(db, contentorId, tipe, atuadorid):
     return rec
 
 
+#               DEFINE VALOR DE TODOS SENSORES DO CONTENTOR
+
+
 def send_values_sensores(db, connection, contentorId, tipo, valor_atual):
     for i in range(len(tipo)):
         pedido = "Update up201801019.sensor SET valor_atual = " + str(
             valor_atual[i]) + " where contentorid=' " + contentorId + "' and tipo='" + tipo[i] + "'"
-        print(pedido)
+        
         executequery(db, connection, pedido)
+        print(pedido)
     # rec = db.fetchone()
     # if rec == None:
     #   print("Não foi encontrado o pedido na DB")
     #  return -1
 
     return 1
+
+#               DEFINE VALOR DE SENSOR INDIVIDUAL: IDENTIFICACAO POR ID
 
 def set_value_sensor(db, connection, sensid, tempo, valor):
 
@@ -174,6 +205,8 @@ def set_value_sensor(db, connection, sensid, tempo, valor):
 
     return result
 
+#               DEFINE VALOR DE ATUADOR INDIVIDUAL: IDENTIFICACAO POR ID
+
 def set_value_atuador(db, connection, atuadorid, tempo, valor):
 
     query = "INSERT INTO up201801019.historico_atuador(data_hora, estado, atuadID) VALUES ('"+ tempo + "',"+ str(valor) +" ," + str(atuadorid) +");"
@@ -185,6 +218,8 @@ def set_value_atuador(db, connection, atuadorid, tempo, valor):
 
     return result
 
+#               INSERE ALARME
+
 def add_alarm(db, connection, contentorid, tempo, prioridade, texto):
 
     query = "INSERT INTO up201801019.alarme(data_hora, prioridade, descrição, contentorid) VALUES ('"+ tempo + "',"+ str(prioridade) +" ,'" + texto +"', "+ str(contentorid) + ");"
@@ -194,8 +229,11 @@ def add_alarm(db, connection, contentorid, tempo, prioridade, texto):
     return result
 
 
+#               ZONA DE TESTE/DEBUG
+
 contentorId = '1'
 while (1):
+    time_date = strftime("%Y-%m-%d %H:%M:%S", gmtime())
     db_con, connection = connect(DB(None, None, None, None))
     fruta, utilizadorid = identificacao(db_con, contentorId)
     print(fruta, utilizadorid)
@@ -214,15 +252,13 @@ while (1):
     print(valor)
 
     send_values_sensores(db_con, connection, contentorId, tipo1, valor1)
-    set_value_sensor(db_con, connection, 6, "2022-11-20 17:17:00", 90)
-    set_value_atuador(db_con, connection, 6, "2022-11-20 17:17:00", 0)
+    set_value_sensor(db_con, connection, 6, str(time_date), 90)
+    set_value_atuador(db_con, connection, 6, str(time_date), 0)
 
-    add_alarm(db_con, connection, 1, "2022-11-20 17:17:00", 5, "Ta pegando fogo")
+    add_alarm(db_con, connection, 1, str(time_date), 5, "Ta pegando fogo")
 
     if connection is not None:
         connection.close()
         print('Database connection closed.')
 
     time.sleep(1)
-
-
