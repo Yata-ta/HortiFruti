@@ -137,6 +137,25 @@ def get_specific_value_sensor(db, contentorId, tipe, sensid):
     return rec
 
 
+#               OBTER ID DE TODOS SENSOR POR CONTENTOR
+
+def get_id_sensor(db, contentorId):
+    pedido = "Select * from up201801019.sensor where contentorid=" + contentorId
+    executar(db, pedido)
+    rec = db.fetchone()
+
+    if rec == None:
+        print("Não foi encontrado o pedido na DB")
+        return None, None
+    id = []
+
+    id.append(rec[0])
+    for rec in db:
+        id.append(rec[0])
+
+    return id
+
+
 #               OBTER VALOR DE TODOS ATUADORES DO CONTENTOR
 
 def get_value_atuadores(db, contentorId):
