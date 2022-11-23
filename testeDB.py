@@ -155,6 +155,24 @@ def get_id_sensor(db, contentorId):
 
     return id
 
+#               OBTER ID DE TODOS ATUADORES POR CONTENTOR
+
+def get_id_atuador(db, contentorId):
+    pedido = "Select * from up201801019.atuador where contentorid=" + contentorId
+    executar(db, pedido)
+    rec = db.fetchone()
+
+    if rec == None:
+        print("Não foi encontrado o pedido na DB")
+        return None
+    id = []
+
+    id.append(rec[0])
+    for rec in db:
+        id.append(rec[0])
+
+    return id
+
 
 #               OBTER VALOR DE TODOS ATUADORES DO CONTENTOR
 
