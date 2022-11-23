@@ -146,7 +146,7 @@ def get_id_sensor(db, contentorId):
 
     if rec == None:
         print("Não foi encontrado o pedido na DB")
-        return None, None
+        return None
     id = []
 
     id.append(rec[0])
