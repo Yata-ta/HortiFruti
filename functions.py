@@ -143,5 +143,47 @@ def initialize_simulator():
     except:
         print_r("ERROR-[4] : Unable to start the simulator")
 
+# create simulated actuators
+def create_actuators(names):
+    Compressor = Actuator(name=names[0],min=13,max=17)
+    Humidifier = Actuator(name=names[1],min=80,max=90)
+    Exhauster = Actuator(name=names[2],min=10,max=80)
+
+    # if needed add more actuators HERE:
+
+
+    return Compressor, Humidifier, Exhauster
+
+#auxiliar actuator control
+def control_actuator(ac, medida, overide, modo):
+    if modo == "max":
+        if ((medida > ac.get_max()) or overide):
+            ac.set_state(True)
+        else: ac.set_state(False)
+        return
+        
+    elif modo == "min": 
+        if ((medida < ac.get_min()) or overide):
+            ac.set_state(True)
+        else: ac.set_state(False)
+        return
+
+#same control but with a timer
+def control_actuator_timer(ac, medida, overide, modo, timer):
+
+    if timer.checkTimer():
+        if modo == "max":
+            if ((medida > ac.get_max()) or overide):
+                ac.set_state(True)
+                timer.resetTimer()
+            else: ac.set_state(False)
+            return
+        
+        elif modo == "min": 
+            if ((medida < ac.get_min()) or overide):
+                ac.set_state(True)
+                timer.resetTimer()
+            else: ac.set_state(False)
+            return
 
 
