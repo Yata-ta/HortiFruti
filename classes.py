@@ -110,8 +110,8 @@ class Actuator:
 
     def get_state_print(self):
         if self.state:
-            return "On"
-        else: return "Off"
+            return 1
+        else: return 0
     
     def set_state(self,state):
         self.state = state
@@ -121,3 +121,21 @@ class Actuator:
     
     def get_max(self):
         return self.max
+
+# creates timers for actuators and update for DB
+class Timer:
+    def __init__(self, waitingTime):
+        self.waitingTime = waitingTime
+        self.time = 0
+
+    def checkTimer(self):
+        if time.time() - self.time > self.waitingTime:
+            return True
+        
+        return False
+
+    def resetTimer(self):
+        self.time = time.time()
+
+    def print(self):
+        print(time.time() - self.time)
