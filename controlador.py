@@ -52,6 +52,18 @@ def define_actuators():
 
     return actuators
 
+
+def atualiza_sensores(sensores):
+    
+    
+    
+    
+    
+    
+    return 
+
+
+
 # Get the  sensor values from the arduino
 # While we don't have this ready, we will use random values
 def get_sensores(sensors):  #do arduino
@@ -78,36 +90,33 @@ def set_sensors(sensors, time):
         connection.close()
         print('Database connection closed.')
 
-    return None
+    return
 
-def get_actuators():  #da db
+def get_atuators():  #da db
 
     return
 
-def set_actuators(actuators, time):  #para a db
-
-    db_con, connection = connect(DB(None, None, None, None))
-
-    for actuator in actuators:
-        set_value_atuador(db_con, connection, actuator.id, time, actuator.value)
-
-    # Do later the buffer part
-
-    # Close db connection
-    if connection is not None:
-        connection.close()
-        print('Database connection closed.')
-
-    return None
+def set_atuators_individual():  #para a db
+    
+    return
 
 
-def control_actuators(actuators): # todos
+def control_atuatores(sensores, ): # todos
 
-    for actuator in actuators:
-        actuator.value = 1
-        print('The new value from actuator ', actuator.name,' is ', actuator.value)
 
-    return actuators
+
+    for sensor_ind in sensores:
+        
+        if sensor_ind[0] == "temperatura":
+            print("temp")
+        elif sensor_ind[0] == "humidade":
+            print("hum") 
+        elif sensor_ind[0] == "gas 1":
+            print("gas1")
+        elif sensor_ind[0] == "gas 2":
+            print("gas2")
+
+    return;
 
 
 def control_frigorifico():
@@ -122,6 +131,7 @@ def control_porta():
 
 
 def verifica_contentor(db, raspberry_id):
+    
     PATH = './contentores_id.txt'
     if os.path.isfile(PATH) and os.access(PATH, os.R_OK):
         f = open('contentores_id', 'r')
@@ -129,49 +139,37 @@ def verifica_contentor(db, raspberry_id):
         for line in f:
             id.append(line)
         f.close()
-
+        
         return id
     else:
-        f = open('contentores_id', 'w')
-        ids = get_id_contentores(db, raspberry_id)
-        f.writelines(str(ids))
-        f.close()
+         f = open('contentores_id', 'w')
+         ids = get_id_contentores(db,raspberry_id)
+         f.writelines(str(ids))
+         f.close()
+         
+         return ids
 
-        return ids
+
 
 
 contentor_ids = None
 raspberry_id = 1
 
 db_con, connection = connect(DB(None, None, None, None))
-
+ 
 while contentor_ids == None:
-    contentor_ids = verifica_contentor(db_con, raspberry_id)
-
-print("Contentores: " + str(contentor_ids[0]) + " e " + str(contentor_ids[1]))
+    contentor_ids = verifica_contentor(db_con,raspberry_id)
 
 
-contentorId = 1
+sensor = []
+
 # Only called once
-sensors = define_sensors()
-actuators = define_actuators()
+for i in range(len(contentor_ids)):
+    sensor.append (define_sensors(contentor_ids[i]))
 
-# Put inside the while later
-get_sensores(sensors)
-time_date = strftime("%Y-%m-%d %H:%M:%S", gmtime())
-time_str = str(time_date)
+while 1:
+    for i in range(len(contentor_ids)):
+        atualiza_sensores(sensor[i])
+        control_atuatores(sensor[i])
 
-print(sensors[0].value)
-
-actuator = control_actuators(actuators)
-
-
-# Get to know which type of sensors are presented in each room
-
-# while 1 :
-#     get_sensores()
-#     set_sensores()
-#
-#     control_atuatores()
-    
 
