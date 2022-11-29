@@ -70,6 +70,21 @@ def identificacao(db, contentorId):
         return None, None
     return rec[1], rec[2]
 
+#               IDENTIFICAÇÃO DE CONTENTORES PARA RASPBERRY RESPETIVA
+
+def get_id_contentores(db, raspberry_id):
+    pedido = 'Select contentorid from up201801019.contentor where raspberryid=' + str(raspberry_id)
+    executar(db, pedido)
+    rec = db.fetchone()
+    if rec == None:
+     #   print("Não foi encontrado o pedido na DB")
+        return None
+    valores=[]
+    valores.append(rec[0])
+    for rec in db:
+        valores.append(rec[0])
+    return valores
+
 
 #               EXECUTA O PEDIDO (NUNO)
 
