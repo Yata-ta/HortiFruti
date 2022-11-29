@@ -84,7 +84,36 @@ def control_porta():
     return;
 
 
-contentorId = 1
+def verifica_contentor(db, raspberry_id):
+    
+    PATH = './contentores_id.txt'
+    if os.path.isfile(PATH) and os.access(PATH, os.R_OK):
+        f = open('contentores_id', 'r')
+        id = []
+        for line in f:
+            id.append(line)
+        f.close()
+        
+        return id
+    else:
+         f = open('contentores_id', 'w')
+         ids = get_id_contentores(db,raspberry_id)
+         f.writelines(str(ids))
+         f.close()
+         
+         return ids
+
+contentor_ids = None
+raspberry_id = 4
+
+db_con, connection = connect(DB(None, None, None, None))
+ 
+while contentor_ids == None:
+    contentor_ids = verifica_contentor(db_con,raspberry_id)
+
+
+print("Contentores: "contentor_ids)
+
 # Only called once
 sensors = define_sensors()
 
