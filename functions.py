@@ -184,6 +184,23 @@ def control_actuator_timer(ac, medida, overide, modo, timer):
                 ac.set_state(True)
                 timer.resetTimer()
             else: ac.set_state(False)
-            return
+            return 
 
+def auxiliar_control(actuators, sensors, override, timer):
+    for i in range(len(actuators)):
+        if actuators[i].get_name() == 'Desumidificador':
+            control_actuator_timer(actuators[i], sensors[i], override[i], 'min', timer)
+        elif actuators[i].get_name() == 'Ar condicionado':
+            control_actuator(actuators[i], sensors[i], override[i], 'max')
+        elif actuators[i].get_name() == 'Exaustor':
+            control_actuator(actuators[i], sensors[i], override[i], 'max')
+            if(not actuators[i].get_state()):
+                control_actuator(actuators[i], sensors[i+1], override[i], 'max') 
 
+def send_history_sensors(db_con, connection, sensorsId1, time_date, sensors):
+    for i in range(len(sensorsId1)):
+       set_value_sensor(db_con, connection, sensorsId1[i], time_date, sensors[i])
+
+def send_history_actuators(db_con, connection, actuatorsId1, time_date, actuators):
+    for i in range(len(actuatorsId1)):
+       set_value_atuador(db_con, connection, actuatorsId1[i], time_date, actuators[i].get_state_1_0())  
