@@ -117,22 +117,14 @@ def executequery(cursor, connection, query):
 
 
 def get_value_sensores(db, contentorId):
-    pedido = 'Select * from up201801019.sensor where contentorid=' + contentorId
+    pedido = 'Select sensid, tipo,valor_atual from up201801019.sensor where contentorid=' + contentorId
     executar(db, pedido)
-    rec = db.fetchone()
-
+    rec = db.fetchall()
     if rec == None:
         print("Não foi encontrado o pedido na DB")
-        return None, None
-    tipo = []
-    valores = []
+        return None
 
-    tipo.append(rec[1])
-    valores.append(rec[2])
-    for rec in db:
-        tipo.append(rec[1])
-        valores.append(rec[2])
-    return tipo, valores
+    return rec
 
 
 #               OBTER VALOR DE SENSOR INDIVIDUAL: IDENTIFICACAO POR ID OU TIPO
@@ -194,19 +186,12 @@ def get_id_atuador(db, contentorId):
 def get_value_atuadores(db, contentorId):
     pedido = 'Select * from up201801019.atuador where contentorid=' + contentorId
     executar(db, pedido)
-    rec = db.fetchone()
+    rec = db.fetchall()
     if rec == None:
         print("Não foi encontrado o pedido na DB")
-        return None, None
-    tipo = []
-    valores = []
+        return None
 
-    tipo.append(rec[1])
-    valores.append(rec[2])
-    for rec in db:
-        tipo.append(rec[1])
-        valores.append(rec[2])
-    return tipo, valores
+    return rec
 
 
 #               OBTER VALOR DE ATUADOR INDIVIDUAL: IDENTIFICACAO POR ID OU TIPO
