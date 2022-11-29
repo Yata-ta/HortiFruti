@@ -10,7 +10,7 @@ from classes import *
 from db import *
 
 
-def define_sensors():
+def define_sensors(contentorId):
 
     sensors = []
     df_sensors = pd.read_csv('sensors.csv')
@@ -104,7 +104,7 @@ def verifica_contentor(db, raspberry_id):
          return ids
 
 contentor_ids = None
-raspberry_id = 4
+raspberry_id = 1
 
 db_con, connection = connect(DB(None, None, None, None))
  
@@ -112,10 +112,10 @@ while contentor_ids == None:
     contentor_ids = verifica_contentor(db_con,raspberry_id)
 
 
-print("Contentores: " + str(contentor_ids))
+print("Contentores: " + str(contentor_ids[0]) + " e "+ str(contentor_ids[1]))
 
 # Only called once
-sensors = define_sensors()
+sensors = define_sensors(contentor_ids[0])
 
 # Put inside the while later
 get_sensores(sensors)
@@ -132,4 +132,3 @@ print(sensors[0].value)
 #
 #     control_atuatores()
     
-
