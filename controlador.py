@@ -112,7 +112,7 @@ while contentor_ids == None:
     contentor_ids = verifica_contentor(db_con,raspberry_id)
 
 
-print("Contentores: " + contentor_ids)
+print("Contentores: " + str(contentor_ids))
 
 # Only called once
 sensors = define_sensors()
