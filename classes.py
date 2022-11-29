@@ -16,8 +16,9 @@ import pickle
 
 # creates a sensor class for simulation purposes 
 class Sensor:
-    def __init__(self,id,name,min,max):
+    def __init__(self,id,room, name,min,max):
         self.id = id
+        self.room = room
         self.name = name
         self.value = 0
         self.min = min
