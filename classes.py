@@ -57,10 +57,11 @@ class Sensor:
 
 # creates a actuator class for simulation purposes 
 class Actuator:
-    def __init__(self,id,name,min,max):
+    def __init__(self,id,room,name,min,max):
         self.id = id
+        self.room = room
         self.name = name
-        self.state = False
+        self.state = 0
         self.min = min
         self.max = max
 
