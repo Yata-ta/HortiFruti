@@ -62,6 +62,7 @@ class Actuator:
         self.room = room
         self.name = name
         self.state = 0
+        self.dashboard = 0
         self.min = min
         self.max = max
 
