@@ -107,7 +107,6 @@ def set_atuators_individual():  #para a db
 
 def control_atuatores(sensores, atuadores,contentorid): # todos
 
-    
 
     for atuador in atuadores:
         
@@ -139,7 +138,7 @@ def get_CO2_info(sensores):
     for sens_indiv in sensores:
         if(sens_indiv.name == "CO2"):
             return sens_indiv.value, sens_indiv.max, sens_indiv.min
-        
+       
     return None, None, None
 
 def get_O2_info(sensores):
@@ -159,6 +158,7 @@ def get_humidade_info(sensores):
     return None, None, None
 
 def muda_frigorifico(valor, atuador):
+   # get_specific_value_atuador
     #manda comando pro arduino
     print(atuador.name, "mudou para ", valor)
     return
@@ -193,7 +193,7 @@ def control_ventoinha(sensores, nivel, atuador):
     if(nivel == 0):         # quem manda é a raspberry
         if(CO2 > max_1 or O2 > max_2):               # falta aqui hierarquia. quem manda?? CO2, O2, o minimo ou o maximo??
             muda_ventoinha(1,atuador)
-        elif(CO2 < min_2 or CO2 < min_2):
+        elif(CO2 < min_1 or O2 < min_2):
             muda_ventoinha(0,atuador)
     elif(nivel != 0):
         muda_ventoinha(max(nivel,0),atuador)
@@ -263,6 +263,6 @@ while 1:
        atualiza_sensores(sensor[i])
        control_atuatores(sensor[i], atuadores[i],contentor_ids[i]) # falta temporização
 
-    break
+       time.sleep(1)
 
 
