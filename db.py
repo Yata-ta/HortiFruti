@@ -9,8 +9,6 @@ from numpy import *
 import time
 from time import gmtime, strftime
 
-            # limpar terminal
-os.system('cls' if os.name == 'nt' else 'clear')
 
 #           CLASSE COM INFO SOBRE A BASE DADOS
 
@@ -33,19 +31,19 @@ def connect(db):
     try:
 
         # connect to the PostgreSQL server
-        print('Connecting to the PostgreSQL database...')
+       # print('Connecting to the PostgreSQL database...')
         conn = psycopg2.connect(host=db.url, database=db.username, user=db.username, password=db.password, port="5432")
 
         # create a cursor
         cur = conn.cursor()
 
         # execute a statement
-        print('PostgreSQL database version:')
+        #print('PostgreSQL database version:')
         cur.execute('SELECT version()')
 
         # display the PostgreSQL database server version
         db_version = cur.fetchone()
-        print(db_version)
+       # print(db_version)
 
         # cur.close()
         return cur, conn
@@ -193,22 +191,36 @@ def get_value_atuadores(db, contentorId):
 
     return rec
 
-
+def get_nivel_regra(atuador_id):
+      
+    db, connection = connect(DB(None, None, None, None))
+    
+    pedido = "Select nivel from up201801019.regra where atuadid=" + str(atuador_id)
+    executar(db, pedido)
+    rec = db.fetchone()
+    if rec == None:
+        print("Não foi encontrado o pedido na DB")
+        return None
+    return rec[0]
 #               OBTER VALOR DE ATUADOR INDIVIDUAL: IDENTIFICACAO POR ID OU TIPO
 
 
-def get_specific_value_atuador(db, contentorId, tipe, atuadorid):
+def get_specific_value_atuador( contentorId, tipe, atuadorid):
+    
+    db, connection = connect(DB(None, None, None, None))
+
     if atuadorid == None:
-        pedido = "Select * from up201801019.atuador where contentorid=" + contentorId + " and tipo='" + tipe + "'"
+        pedido = "Select valor_atual from up201801019.atuador where contentorid=" + contentorId + " and tipo='" + tipe + "'"
     else:
-        pedido = "Select * from up201801019.atuador where contentorid=" + contentorId + " and atuadid='" + atuadorid + "'"
+        pedido = "Select valor_atual from up201801019.atuador where contentorid=" + contentorId + " and atuadid='" + atuadorid + "'"
     executar(db, pedido)
-    rec = db.fetchone()[2]
+    
+    rec = db.fetchone()
     if rec == None:
         print("Não foi encontrado o pedido na DB")
         return None
 
-    return rec
+    return rec[0]
 
 
 #               DEFINE VALOR DE TODOS SENSORES DO CONTENTOR
@@ -220,7 +232,6 @@ def send_values_sensores(db, connection, contentorId, tipo, valor_atual):
             valor_atual[i]) + " where contentorid=' " + contentorId + "' and tipo='" + tipo[i] + "'"
         
         executequery(db, connection, pedido)
-        print(pedido)
     # rec = db.fetchone()
     # if rec == None:
     #   print("Não foi encontrado o pedido na DB")
