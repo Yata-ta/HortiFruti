@@ -115,7 +115,7 @@ def executequery(cursor, connection, query):
 
 
 def get_value_sensores(db, contentorId):
-    pedido = 'Select sensid, tipo,valor_atual from up201801019.sensor where contentorid=' + contentorId
+    pedido = 'Select * from up201801019.sensor where contentorid=' + str(contentorId)
     executar(db, pedido)
     rec = db.fetchall()
     if rec == None:
@@ -182,7 +182,7 @@ def get_id_atuador(db, contentorId):
 #               OBTER VALOR DE TODOS ATUADORES DO CONTENTOR
 
 def get_value_atuadores(db, contentorId):
-    pedido = 'Select * from up201801019.atuador where contentorid=' + contentorId
+    pedido = 'Select * from up201801019.atuador where contentorid=' + str(contentorId)
     executar(db, pedido)
     rec = db.fetchall()
     if rec == None:
