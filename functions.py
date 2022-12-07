@@ -5,7 +5,7 @@
 
 import os
 import colorama as cl
-import subprocess
+import platform
 import logging
 import threading
 import time
@@ -126,11 +126,12 @@ def initialize_system():
         print_r("ERROR-[1] : Failed opening ASCII art")
     
     try:
-        if os.uname()[4].startswith("arm"):
-            print(cl.Back.GREEN + f"Executing on {os.uname()[4]}")
+        if platform.uname()[5].startswith("arm"):
+            print(cl.Back.GREEN + f"Executing on {platform.uname()[5]}")
             return 1
         else:
             print_r("ERROR-[2] : Didn't found an ARM chip 'BCM***' module, please execute me in Raspberry Pi or similar...")
+            print(cl.Back.RED + f"You are on a {platform.system()} system")
             return 2
     except:
             print_r("ERROR-[3] : Unable to obtain the base model of the device")
