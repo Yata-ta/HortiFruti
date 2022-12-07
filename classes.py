@@ -51,8 +51,10 @@ class Server():
 
 # creates a sensor class for simulation purposes 
 class Sensor:
-    def __init__(self,name,min,max):
+    def __init__(self,id,room,name,min,max):
+        self.id = id
         self.name = name
+        self.room = room
         self.value = 0
         self.min = min
         self.max = max
@@ -96,8 +98,10 @@ class Sensor:
 
 # creates a actuator class for simulation purposes 
 class Actuator:
-    def __init__(self,name,min,max):
+    def __init__(self,id,room,name,min,max):
+        self.id = id
         self.name = name
+        self.room = room
         self.state = False
         self.min = min
         self.max = max

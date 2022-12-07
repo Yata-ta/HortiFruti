@@ -9,6 +9,8 @@ import platform
 import logging
 import threading
 import time
+import board
+import adafruit_bme680
 from classes import *
 
 # prints error [local]
