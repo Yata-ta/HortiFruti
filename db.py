@@ -291,12 +291,11 @@ def set_value_sensor( sensid, tempo, valor):
     return result
 
 
-def get_timings(rasp_id):
+def get_timings(cont_id):
     
     db, connection = connect(DB())
 
-    pedido = "Select refresh_rate_sensores, atuatores_min_time from up201801019.raspberry where raspberryid =" + str(rasp_id)
-
+    pedido = "Select refresh_rate_sensores, atuatores_min_time from up201801019.contentor where contentorid =" + str(cont_id)
     executar(db, pedido)
     rec = db.fetchone()
     
