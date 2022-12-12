@@ -15,9 +15,10 @@ from time import gmtime, strftime
 class DB:
 
     def __init__(self):
-        self.url = "db.fe.up.pt"
-        self.username = "up201801019"
-        self.password = "CR6oJPBwF"
+        self.url = "ec2-54-75-26-218.eu-west-1.compute.amazonaws.com"
+        self.database = "d5s6ue6qinl0ng"
+        self.username = "kxxubuuaqoiacg"
+        self.password = "baee797511a5a5a24c7124d3495a82ce9fc4ac0ff874d1181d909f0b7e2adf4a"
         self.con = None
 
 
@@ -29,7 +30,7 @@ def connect(db):
     try:
         # connect to the PostgreSQL server
        # print('Connecting to the PostgreSQL database...')
-        conn = psycopg2.connect(host=db.url, database=db.username, user=db.username, password=db.password, port="5432")
+        conn = psycopg2.connect(host=db.url, database=db.database, user=db.username, password=db.password, port="5432")
 
         # create a cursor
         cur = conn.cursor()
@@ -206,25 +207,6 @@ def get_value_atuadores(contentorId):
     #    print('Database connection closed.')
 
     return rec
-'''
-def get_nivel_regra(atuador_id):
-      
-    db, connection = connect(DB())
-    
-    pedido = "Select nivel from up201801019.regra where atuadid=" + str(atuador_id)
-    executar(db, pedido)
-    rec = db.fetchone()
-        # Close db connection
-    if connection is not None:
-        connection.close()
-    #    print('Database connection closed.')
-
-    if rec == None:
-        print("Não foi encontrado o pedido na DB")
-        return None
-    return rec[0]
-
-'''
     
 #               OBTER VALOR DE ATUADOR INDIVIDUAL: IDENTIFICACAO POR ID OU TIPO
 

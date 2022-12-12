@@ -3,7 +3,6 @@ from functions import *
 from simulator import *
 from database import *
 from db_control import *
-from sensor import *
 
 contentor_ids = None
 raspberry_id = 1
@@ -18,28 +17,30 @@ if __name__ == '__main__':
     sensor = define_sensors(1)
     _,temp_max,temp_min = get_temperatura_info(sensor)
 
-
-
-    # read temperature values
     # actuate compressor
 
     print(temp_max,temp_min)
 
 
     if rtn == 1:
-        print("Starting local execution...")
-        bme680 = initialize_sensor()
-        while True:
-            time_date = strftime("%Y-%m-%d %H:%M:%S", gmtime())
-            temp = get_sensor_data(bme680)
-            if (temp >= temp_max):
-                print("Door Open")
-            if (temp <= temp_min):
-                print("Door Close")
-            
-            set_value_sensor(1,time_date,temp)
-
         #TODO code functions for local execution and execute them here.
+
+        print("Starting local execution...")
+        while True:
+
+            time_date = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+            # read temperature values
+            temp_value,gas_value,humidity_value,pressure_value = initialize_real_sensors("PT")
+
+            print(f"{temp_min} < {temp_value} < {temp_max}")
+
+            if (temp_value >= temp_max):
+                print_y("Door Open")
+            if (temp_value <= temp_min):
+                print_y("Door Close")
+            
+            set_value_sensor(1,time_date,temp_value)
+
     elif rtn == 2:
         while True:
             print(cl.Style.BRIGHT + "Want to enter developer mode and execute the simulator?(Y/N) ",end='')

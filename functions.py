@@ -11,6 +11,7 @@ import threading
 import time
 import board
 import adafruit_bme680
+import smbus
 from classes import *
 
 # prints error [local]
@@ -104,7 +105,6 @@ def start_simulation(names,size):
         time.sleep(1)
         var += 1
 
-
 # simulate the values for the sensors [local thread]
 def simulate_function(name):
     logging.info("Thread %s: starting", name)
@@ -128,8 +128,8 @@ def initialize_system():
         print_r("ERROR-[1] : Failed opening ASCII art")
     
     try:
-        if platform.uname()[5].startswith("arm"):
-            print(cl.Back.GREEN + f"Executing on {platform.uname()[5]}")
+        if platform.uname()[4].startswith("aarch64"):
+            print(cl.Back.GREEN + f"Executing on {platform.uname()[4]}")
             return 1
         else:
             print_r("ERROR-[2] : Didn't found an ARM chip 'BCM***' module, please execute me in Raspberry Pi or similar...")
@@ -146,5 +146,28 @@ def initialize_simulator():
     except:
         print_r("ERROR-[4] : Unable to start the simulator")
 
+def initialize_real_sensors(Location: str):
+    """
+    Location - defines the geographical location of the raspberry, supported locations = [PT] & [BR]
+    """
+    bus = smbus.SMBus(1)
+    i2c = board.I2C()  # uses board.SCL and board.SDA
+    bme680 = adafruit_bme680.Adafruit_BME680_I2C(i2c, debug=False)
 
+    try:
+        # Calibration of pressure
+        if Location == "PT":
+            # change this to match the location's pressure (hPa) at sea level
+            bme680.sea_level_pressure = 1008.5
 
+        elif Location == "BR":
+            # change this to match the location's pressure (hPa) at sea level
+            bme680.sea_level_pressure = 1012.5
+        else: 
+            print_r(f"ERROR-[4] : Location '{Location}' not found or invalid")
+        # temperature calibration
+        temperature_offset = -5
+        return bme680.temperature + temperature_offset, bme680.gas, bme680.relative_humidity, bme680.pressure
+        
+    except:
+        print_r(f"ERROR-[5] : Unable to start real sensors ")
