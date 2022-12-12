@@ -12,10 +12,9 @@ from time import gmtime, strftime
 
 #           CLASSE COM INFO SOBRE A BASE DADOS
 
-class DB(object):
-    _db = None
+class DB:
 
-    def __init__(self, url, username, password, con):
+    def __init__(self):
         self.url = "db.fe.up.pt"
         self.username = "up201801019"
         self.password = "CR6oJPBwF"
@@ -26,10 +25,8 @@ class DB(object):
 
 def connect(db):
     """ Connect to the PostgreSQL database server """
-    DB
     conn = None
     try:
-
         # connect to the PostgreSQL server
        # print('Connecting to the PostgreSQL database...')
         conn = psycopg2.connect(host=db.url, database=db.username, user=db.username, password=db.password, port="5432")
@@ -37,18 +34,11 @@ def connect(db):
         # create a cursor
         cur = conn.cursor()
 
-        # execute a statement
-        #print('PostgreSQL database version:')
-        cur.execute('SELECT version()')
-
-        # display the PostgreSQL database server version
-        db_version = cur.fetchone()
-       # print(db_version)
-
         # cur.close()
         return cur, conn
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
+        print("na db")
     # close the communication with the PostgreSQL
     '''
     finally:
@@ -70,17 +60,29 @@ def identificacao(db, contentorId):
 
 #               IDENTIFICAÇÃO DE CONTENTORES PARA RASPBERRY RESPETIVA
 
-def get_id_contentores(db, raspberry_id):
+def get_id_contentores( raspberry_id):
+    
+    db, connection = connect(DB())
+
     pedido = 'Select contentorid from up201801019.contentor where raspberryid=' + str(raspberry_id)
     executar(db, pedido)
     rec = db.fetchone()
+        # Close db connection
+
     if rec == None:
-     #   print("Não foi encontrado o pedido na DB")
+        if connection is not None:
+            connection.close()
+    #    print('Database connection closed.')       
         return None
+
     valores=[]
     valores.append(rec[0])
     for rec in db:
         valores.append(rec[0])
+
+    if connection is not None:
+            connection.close()
+    #    print('Database connection closed.')  
     return valores
 
 
@@ -114,14 +116,21 @@ def executequery(cursor, connection, query):
 #               OBTER VALOR DE TODOS SENSORES DO CONTENTOR
 
 
-def get_value_sensores(db, contentorId):
+def get_value_sensores(contentorId):
+    db, connection = connect(DB())
+
     pedido = 'Select * from up201801019.sensor where contentorid=' + str(contentorId)
     executar(db, pedido)
     rec = db.fetchall()
     if rec == None:
-        print("Não foi encontrado o pedido na DB")
+        if connection is not None:
+            connection.close()
         return None
 
+    # Close db connection
+    if connection is not None:
+        connection.close()
+       # print('Database connection closed.')
     return rec
 
 
@@ -181,41 +190,61 @@ def get_id_atuador(db, contentorId):
 
 #               OBTER VALOR DE TODOS ATUADORES DO CONTENTOR
 
-def get_value_atuadores(db, contentorId):
+def get_value_atuadores(contentorId):
+    db, connection = connect(DB())
+
     pedido = 'Select * from up201801019.atuador where contentorid=' + str(contentorId)
     executar(db, pedido)
     rec = db.fetchall()
     if rec == None:
         print("Não foi encontrado o pedido na DB")
         return None
+    
+    # Close db connection
+    if connection is not None:
+        connection.close()
+    #    print('Database connection closed.')
 
     return rec
-
+'''
 def get_nivel_regra(atuador_id):
       
-    db, connection = connect(DB(None, None, None, None))
+    db, connection = connect(DB())
     
     pedido = "Select nivel from up201801019.regra where atuadid=" + str(atuador_id)
     executar(db, pedido)
     rec = db.fetchone()
+        # Close db connection
+    if connection is not None:
+        connection.close()
+    #    print('Database connection closed.')
+
     if rec == None:
         print("Não foi encontrado o pedido na DB")
         return None
     return rec[0]
+
+'''
+    
 #               OBTER VALOR DE ATUADOR INDIVIDUAL: IDENTIFICACAO POR ID OU TIPO
 
 
 def get_specific_value_atuador( contentorId, tipe, atuadorid):
     
-    db, connection = connect(DB(None, None, None, None))
+    db, connection = connect(DB())
 
     if atuadorid == None:
         pedido = "Select valor_atual from up201801019.atuador where contentorid=" + contentorId + " and tipo='" + tipe + "'"
     else:
         pedido = "Select valor_atual from up201801019.atuador where contentorid=" + contentorId + " and atuadid='" + atuadorid + "'"
     executar(db, pedido)
-    
     rec = db.fetchone()
+    
+        # Close db connection
+    if connection is not None:
+        connection.close()
+    #    print('Database connection closed.')
+
     if rec == None:
         print("Não foi encontrado o pedido na DB")
         return None
@@ -241,28 +270,62 @@ def send_values_sensores(db, connection, contentorId, tipo, valor_atual):
 
 #               DEFINE VALOR DE SENSOR INDIVIDUAL: IDENTIFICACAO POR ID
 
-def set_value_sensor(db, connection, sensid, tempo, valor):
+def set_value_sensor( sensid, tempo, valor):
+    
+    db, connection = connect(DB())
 
     query = "INSERT INTO up201801019.historico_sensor(data_hora, medição, sensID) VALUES ('"+ tempo +"'," + str(valor) + ", " + str(sensid) +");"
-    print(query)
+  #  print(query)
     result = executequery(db, connection, query)
 
     query = "UPDATE up201801019.sensor SET valor_atual = "+ str(valor) + " WHERE sensid = " + str(sensid) + ";"
     print
     result = executequery(db, connection, query)
 
+    
+    # Close db connection
+    if connection is not None:
+        connection.close()
+        #print('Database connection closed.')
+
     return result
+
+
+def get_timings(rasp_id):
+    
+    db, connection = connect(DB())
+
+    pedido = "Select refresh_rate_sensores, atuatores_min_time from up201801019.raspberry where raspberryid =" + str(rasp_id)
+
+    executar(db, pedido)
+    rec = db.fetchone()
+    
+        # Close db connection
+    if connection is not None:
+        connection.close()
+    #    print('Database connection closed.')
+
+    if rec == None:
+        print("Não foi encontrado o pedido na DB")
+        return None
+    
+    return rec
 
 #               DEFINE VALOR DE ATUADOR INDIVIDUAL: IDENTIFICACAO POR ID
 
-def set_value_atuador(db, connection, atuadorid, tempo, valor):
+def set_value_atuador( atuadorid,  tempo,valor):
+    
+    db, connection = connect(DB())
 
     query = "INSERT INTO up201801019.historico_atuador(data_hora, estado, atuadID) VALUES ('"+ tempo + "',"+ str(valor) +" ," + str(atuadorid) +");"
-    print(query)
+    #print(query)
     result = executequery(db, connection, query)
 
     query = "UPDATE up201801019.atuador SET valor_atual = "+ str(valor) + " WHERE atuadid = " + str(atuadorid) + ";"
     result = executequery(db, connection, query)
+    if connection is not None:
+        connection.close()
+        #print('Database connection closed.')
 
     return result
 
@@ -282,7 +345,7 @@ def add_alarm(db, connection, contentorid, tempo, prioridade, texto):
 contentorId = '1'
 while (1):
     time_date = strftime("%Y-%m-%d %H:%M:%S", gmtime())
-    db_con, connection = connect(DB(None, None, None, None))
+    db_con, connection = connect(DB())
     fruta, utilizadorid = identificacao(db_con, contentorId)
     print(fruta, utilizadorid)
 
