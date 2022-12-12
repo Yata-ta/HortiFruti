@@ -183,7 +183,7 @@ def control_frigorifico(sensores, nivel, atuador,time_day):
     temp, max_, min = get_temperatura_info(sensores)
     if(nivel == 0):         # quem manda é a raspberry
       if(timing_actu < time.time() - atuador.time_passed): 
-        if(temp > max_):
+        if(temp > max_): 
             muda_frigorifico(1,atuador,time_day)
             atuador.time_passed = time.time()
         elif(temp < min):
