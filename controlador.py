@@ -14,15 +14,13 @@ from db import *
 # Get the  sensor values from the arduino
 # While we don't have this ready, we will use random values
 
-def get_sensors(sensors, i):  #do arduino
-  global time_begin_sens 
+def get_sensors(sensors):  #do arduino
 
-  if(timing_sens < time.time() - time_begin_sens[i]): 
+      
     for sensor in sensors:
         sensor.value = random.randint(sensor.min-50, sensor.max+50)
         print('The new value from sensor ', sensor.name,' is ', sensor.value)
-    time_begin_sens[i] = time.time()
-  return sensors
+    return  sensors
 
 def define_sensors(contentorId):
 
@@ -48,34 +46,33 @@ def define_sensors(contentorId):
     return sensors
 
     # Add the sensor values to the db and also to the buffer (local memory)
-def set_sensors(sensors, time):
+def set_sensors(sensors, time_day,temp_sens_passado):
+  
+  if(timing_sens < time.time() - temp_sens_passado): 
 
-
-    for sensor in sensors:
-        set_value_sensor(sensor.id, time, sensor.value)
+     for sensor in sensors:
+        set_value_sensor(sensor.id, time_day, sensor.value)
+     temp_sens_passado = time.time()
 
     # Do later the buffer part
+     print("--- Mandou Para a DB ---") 
+  return temp_sens_passado
 
 
 
-    return
-
-
-def atualiza_sensores(contentorId, sensors, time, iteracao):
+def atualiza_sensores(contentorId, sensors, time, temp_sens_passado):
 
     try:
         sensors = define_sensors(contentorId)
     except:
         print('Could not connect with the db')
 
-    sensors = get_sensors(sensors, iteracao)
+    sensors = get_sensors(sensors)
 
-    try:
-        set_sensors(sensors, time)
-    except:
-        print('Could not connect with the db')
+    temp_sens_passado = set_sensors(sensors, time,temp_sens_passado)
+    
 
-    return sensors
+    return temp_sens_passado, sensors
 
 def define_actuators(contentorId):
 
@@ -183,7 +180,7 @@ def control_frigorifico(sensores, nivel, atuador,time_day):
     temp, max_, min = get_temperatura_info(sensores)
     if(nivel == 0):         # quem manda é a raspberry
       if(timing_actu < time.time() - atuador.time_passed): 
-        if(temp > max_): 
+        if(temp > max_):
             muda_frigorifico(1,atuador,time_day)
             atuador.time_passed = time.time()
         elif(temp < min):
@@ -281,11 +278,12 @@ while 1:
 
     time_date = strftime("%Y-%m-%d %H:%M:%S", gmtime())
     
-    timing_sens, timing_actu = get_timings(raspberry_id)
+
 
     for i in range(len(contentor_ids)):
-       print("\n-------   contentor: ", i,"   -------") 
-       sensor[i] = atualiza_sensores(contentor_ids[i], sensor[i], time_date, i)
+       print("\n-------   contentor: ", contentor_ids[i],"   -------") 
+       timing_sens, timing_actu = get_timings(contentor_ids[i])
+       time_begin_sens[i], sensor[i] = atualiza_sensores(contentor_ids[i], sensor[i], time_date, time_begin_sens[i])
        control_atuatores(sensor[i], atuadores[i],contentor_ids[i],time_date) 
     time.sleep(1)
        
