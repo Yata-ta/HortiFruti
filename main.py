@@ -1,4 +1,5 @@
 import colorama as cl
+import sys
 from functions import *
 from simulator import *
 from database import *
@@ -11,6 +12,11 @@ atuadores = []
 timer = []
 
 if __name__ == '__main__':
+
+    check_params = start(sys.argv)
+
+    if check_params == 2 or check_params== None:
+        sys.exit(0)
     
     rtn = initialize_system()
 
@@ -26,20 +32,24 @@ if __name__ == '__main__':
         #TODO code functions for local execution and execute them here.
 
         print("Starting local execution...")
+        initialize_real_sensors()
+
         while True:
 
             time_date = strftime("%Y-%m-%d %H:%M:%S", gmtime())
             # read temperature values
-            temp_value,gas_value,humidity_value,pressure_value = initialize_real_sensors("PT")
+            temp_value,gas_value,humidity_value,pressure_value = read_real_sensors("PT")
 
-            print(f"{temp_min} < {temp_value} < {temp_max}")
+            print(f"{temp_min} < {temp_value:.2f} < {temp_max}")
 
             if (temp_value >= temp_max):
                 print_y("Door Open")
             if (temp_value <= temp_min):
                 print_y("Door Close")
             
-            set_value_sensor(1,time_date,temp_value)
+             # SAFETY DEBUG MODE, TO NOT FLOOD THE DATABASE
+            if check_params == 1:
+                set_value_sensor(1,time_date,temp_value)
 
     elif rtn == 2:
         while True:

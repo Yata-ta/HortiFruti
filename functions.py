@@ -146,9 +146,33 @@ def initialize_simulator():
     except:
         print_r("ERROR-[4] : Unable to start the simulator")
 
-def initialize_real_sensors(Location: str):
+def initialize_real_sensors():
     """
+    Check if all sensors are connected
+    @param\n
     Location - defines the geographical location of the raspberry, supported locations = [PT] & [BR]
+    """
+    bus = smbus.SMBus(1)
+    i2c = board.I2C()  # uses board.SCL and board.SDA
+
+    try:
+        bme680 = adafruit_bme680.Adafruit_BME680_I2C(i2c, debug=False)
+        print("[" + cl.Fore.GREEN + "OK" + cl.Fore.WHITE + "]" + "- BME680 connected")
+
+    except:
+        print("[" + cl.Fore.RED + "NOT FOUND" + cl.Fore.WHITE + "]" + "- BME680 not found") 
+        pass
+
+def read_real_sensors(Location: str):
+    """
+    Read data from the sensors\n
+    @param\n
+    Location - defines the geographical location of the raspberry, supported locations = [PT] & [BR]
+    @return\n
+    [1] - Temperature in celsius\n
+    [2] - Gas\n
+    [3] - Humidity\n
+    [4] - Pressure in hPa\n
     """
     bus = smbus.SMBus(1)
     i2c = board.I2C()  # uses board.SCL and board.SDA
@@ -171,3 +195,29 @@ def initialize_real_sensors(Location: str):
         
     except:
         print_r(f"ERROR-[5] : Unable to start real sensors ")
+
+def start(argv)->int:
+    '''
+    Mode function to protect the database 
+    '''
+    try:
+        if argv[1] == 'DEBUG':
+            print("Entering" + cl.Fore.LIGHTYELLOW_EX + " DEBUG " + cl.Fore.WHITE + "mode to protect from database flood")
+            return 0
+
+        elif argv[1] == 'NORMAL':
+            print("Entering" + cl.Fore.LIGHTGREEN_EX + " NORMAL " + cl.Fore.WHITE + "mode")
+            return 1
+
+        else:
+            print("INVALID argument to main.py! please choose one of the following...")
+            print("DEBUG - for debug process (this mode will protect the database from flooding)")
+            print("NORMAL - for normal program execution")
+            print("EXAMPLE - $ sudo python3 main.py DEBUG")
+            return 2
+
+    except:
+            print("MISSING argument to main.py! please choose one of the following...")
+            print("DEBUG - for debug process (this mode will protect the database from flooding)")
+            print("NORMAL - for normal program execution")
+            print("EXAMPLE - $ sudo python3 main.py DEBUG") 
