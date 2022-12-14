@@ -1,7 +1,7 @@
 import multiprocessing as mp
 import colorama as cl
-from classes import *
-from functions import *
+from modules.classes import *
+from modules.functions import *
 
 names = ["Temp", "Hum", "CO2", "O2", "Pressure"]
 sensor_names = ["Temperature", "Humidity", "CO2", "O2", "Pressure"]

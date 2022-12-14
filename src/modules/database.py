@@ -8,6 +8,7 @@ import numpy as np
 from numpy import *
 import time
 from time import gmtime, strftime
+from dotenv import load_dotenv
 
 
 #           CLASSE COM INFO SOBRE A BASE DADOS
@@ -15,10 +16,11 @@ from time import gmtime, strftime
 class DB:
 
     def __init__(self):
+        load_dotenv('../db_credentials.env')
         self.url = "ec2-54-75-26-218.eu-west-1.compute.amazonaws.com"
-        self.database = "d5s6ue6qinl0ng"
-        self.username = "kxxubuuaqoiacg"
-        self.password = "baee797511a5a5a24c7124d3495a82ce9fc4ac0ff874d1181d909f0b7e2adf4a"
+        self.database = os.environ['DBNAME']
+        self.username = os.environ['USERNAME']
+        self.password = os.environ['DBPW']
         self.con = None
 
 

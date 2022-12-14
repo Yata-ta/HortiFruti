@@ -1,0 +1,18 @@
+[project]
+name = "HortiFruti System"
+version = "0.0.8"
+authors = [
+  { name="Gabriel Salvador", email="up201800998@up.pt" },
+]
+description = "Automation and control of cold rooms for implementation in Brazil."
+readme = "README.md"
+requires-python = ">=3.9"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/Yata-ta/HortiFruti"
+"Bug Tracker" = "https://github.com/Yata-ta/HortiFruti/issues"

@@ -1,9 +1,12 @@
 import colorama as cl
 import sys
-from functions import *
-from simulator import *
-from database import *
-from db_control import *
+import os
+
+
+import modules.db_control
+import modules.database 
+import modules.functions
+import simulator
 
 contentor_ids = None
 raspberry_id = 1
@@ -13,43 +16,39 @@ timer = []
 
 if __name__ == '__main__':
 
-    check_params = start(sys.argv)
+    check_params = modules.functions.start(sys.argv)
 
     if check_params == 2 or check_params== None:
         sys.exit(0)
     
-    rtn = initialize_system()
+    rtn = modules.functions.initialize_system()
 
-    sensor = define_sensors(1)
-    _,temp_max,temp_min = get_temperatura_info(sensor)
-
-    # actuate compressor
-
-    print(temp_max,temp_min)
-
+    sensor = modules.db_control.define_sensors(1)
+    _,temp_max,temp_min = modules.db_control.get_temperatura_info(sensor)
+    
 
     if rtn == 1:
         #TODO code functions for local execution and execute them here.
 
         print("Starting local execution...")
-        initialize_real_sensors()
+        modules.functions.initialize_real_sensors()
 
         while True:
 
-            time_date = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+            time_date = modules.database.strftime("%Y-%m-%d %H:%M:%S", modules.database.gmtime())
             # read temperature values
-            temp_value,gas_value,humidity_value,pressure_value = read_real_sensors("PT")
+            temp_value,gas_value,humidity_value,pressure_value = modules.functions.read_real_sensors("PT")
 
             print(f"{temp_min} < {temp_value:.2f} < {temp_max}")
 
             if (temp_value >= temp_max):
-                print_y("Door Open")
+                modules.functions.print_y("Door Open")
             if (temp_value <= temp_min):
-                print_y("Door Close")
+                modules.functions.print_y("Door Close")
             
              # SAFETY DEBUG MODE, TO NOT FLOOD THE DATABASE
             if check_params == 1:
-                set_value_sensor(1,time_date,temp_value)
+                modules.db_control.set_value_sensor(1,time_date,temp_value)
 
     elif rtn == 2:
         while True:
@@ -57,18 +56,7 @@ if __name__ == '__main__':
             ans = str(input())
             if (ans.lower() == 'y'): 
                 print(cl.Fore.YELLOW + "Starting simulator...")
-
-                '''time_date = strftime("%Y-%m-%d %H:%M:%S", gmtime())
-                os.system('cls||clear')
-                for i in range(len(contentor_ids)):
-                    sensor[i] = atualiza_sensores(contentor_ids[i], sensor[i], time_date)
-                    control_atuatores(sensor[i], atuadores[i],contentor_ids[i],time_date) # falta temporização
-                time.sleep(5)'''
-                
-
-                run_sim()
-
-
+                simulator.run_sim()
                 break
             elif ans.lower() == 'n':
                 print("Exiting program...")
