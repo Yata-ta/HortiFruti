@@ -29,8 +29,15 @@ def connect(db):
     try:
         # connect to the PostgreSQL server
         # print('Connecting to the PostgreSQL database...')
-        conn = psycopg2.connect(host=db.url, database=db.username, user=db.username, password=db.password, port="5432")
 
+        # To use FEUP's database you just need to uncomment the line below
+        # FEUP Database
+        # conn = psycopg2.connect(host=db.url, database=db.username, user=db.username, password=db.password, port="5432")
+
+        # Heroku Database
+        DATABASE_URL = 'postgres://kxxubuuaqoiacg:baee797511a5a5a24c7124d3495a82ce9fc4ac0ff874d1181d909f0b7e2adf4a@ec2-54-75-26-218.eu-west-1.compute.amazonaws.com:5432/d5s6ue6qinl0ng'
+        conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+        
         # create a cursor
         cur = conn.cursor()
 
@@ -38,7 +45,6 @@ def connect(db):
         return cur, conn
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
-        print("na db")
     # close the communication with the PostgreSQL
     '''
     finally:
