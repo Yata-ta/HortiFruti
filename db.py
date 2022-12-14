@@ -28,7 +28,7 @@ def connect(db):
     conn = None
     try:
         # connect to the PostgreSQL server
-       # print('Connecting to the PostgreSQL database...')
+        # print('Connecting to the PostgreSQL database...')
         conn = psycopg2.connect(host=db.url, database=db.username, user=db.username, password=db.password, port="5432")
 
         # create a cursor
@@ -51,16 +51,16 @@ def connect(db):
 #               OBTER IDENTIFICAÇÃO DO CONTENTOR (FRUTA E UTILIZADORID)
 
 def identificacao(db, contentorId):
-  try:
-    pedido = 'Select * from up201801019.contentor where contentorid=' + contentorId
-    executar(db, pedido)
-    rec = db.fetchone()
-    if rec == None:
-        print("Não foi encontrado o pedido na DB")
-        return None, None
-    return rec[1], rec[2]
+    try:
+        pedido = 'Select * from up201801019.contentor where contentorid=' + contentorId
+        executar(db, pedido)
+        rec = db.fetchone()
+        if rec == None:
+            print("Não foi encontrado o pedido na DB")
+            return None, None
+        return rec[1], rec[2]
 
-  except(Exception, psycopg2.DatabaseError) as error:
+    except(Exception, psycopg2.DatabaseError) as error:
         print(error)
 #               IDENTIFICAÇÃO DE CONTENTORES PARA RASPBERRY RESPETIVA
 
@@ -69,33 +69,33 @@ def identificacao(db, contentorId):
 
 
 def get_id_contentores( raspberry_id):
-  
-  try:  
 
-    db, connection = connect(DB())
+    try:
 
-    pedido = 'Select contentorid from up201801019.contentor where raspberryid=' + str(raspberry_id)
-    executar(db, pedido)
-    rec = db.fetchone()
+        db, connection = connect(DB())
+
+        pedido = 'Select contentorid from up201801019.contentor where raspberryid=' + str(raspberry_id)
+        executar(db, pedido)
+        rec = db.fetchone()
         # Close db connection
 
-    if rec == None:
+        if rec == None:
+            if connection is not None:
+                connection.close()
+            #    print('Database connection closed.')
+            return None
+
+        valores=[]
+        valores.append(rec[0])
+        for rec in db:
+            valores.append(rec[0])
+
         if connection is not None:
             connection.close()
-    #    print('Database connection closed.')       
-        return None
+        #    print('Database connection closed.')
+        return valores
 
-    valores=[]
-    valores.append(rec[0])
-    for rec in db:
-        valores.append(rec[0])
-
-    if connection is not None:
-            connection.close()
-    #    print('Database connection closed.')  
-    return valores
-    
-  except(Exception, psycopg2.DatabaseError) as error:
+    except(Exception, psycopg2.DatabaseError) as error:
         print(error)
         return None
 
@@ -129,25 +129,25 @@ def executequery(cursor, connection, query):
 
 
 def get_value_sensores(contentorId):
-    
-  try:
-    db, connection = connect(DB())
 
-    pedido = 'Select * from up201801019.sensor where contentorid=' + str(contentorId)
-    executar(db, pedido)
-    rec = db.fetchall()
-    if rec == None:
+    try:
+        db, connection = connect(DB())
+
+        pedido = 'Select * from up201801019.sensor where contentorid=' + str(contentorId)
+        executar(db, pedido)
+        rec = db.fetchall()
+        if rec == None:
+            if connection is not None:
+                connection.close()
+            return None
+
+        # Close db connection
         if connection is not None:
             connection.close()
-        return None
+        # print('Database connection closed.')
+        return rec
 
-    # Close db connection
-    if connection is not None:
-        connection.close()
-       # print('Database connection closed.')
-    return rec
-
-  except(Exception, psycopg2.DatabaseError) as error:
+    except(Exception, psycopg2.DatabaseError) as error:
         print(error)
 
 
@@ -155,87 +155,87 @@ def get_value_sensores(contentorId):
 
 
 def get_specific_value_sensor(db, contentorId, tipe, sensid):
-    
-  try:
 
-    if sensid == None:
-        pedido = "Select * from up201801019.sensor where contentorid=" + contentorId + " and tipo='" + tipe + "'"
-    else:
-        pedido = "Select * from up201801019.sensor where contentorid=" + contentorId + " and sensid='" + sensid + "'"
-    executar(db, pedido)
-    rec = db.fetchone()[2]
-    if rec == None:
-        print("Não foi encontrado o pedido na DB")
-        return None
+    try:
 
-    return rec
+        if sensid == None:
+            pedido = "Select * from up201801019.sensor where contentorid=" + contentorId + " and tipo='" + tipe + "'"
+        else:
+            pedido = "Select * from up201801019.sensor where contentorid=" + contentorId + " and sensid='" + sensid + "'"
+        executar(db, pedido)
+        rec = db.fetchone()[2]
+        if rec == None:
+            print("Não foi encontrado o pedido na DB")
+            return None
 
-  except(Exception, psycopg2.DatabaseError) as error:
+        return rec
+
+    except(Exception, psycopg2.DatabaseError) as error:
         print(error)
 
 
 #               OBTER ID DE TODOS SENSOR POR CONTENTOR
 
 def get_id_sensor(db, contentorId):
-  try:
-    pedido = "Select * from up201801019.sensor where contentorid=" + contentorId
-    executar(db, pedido)
-    rec = db.fetchone()
+    try:
+        pedido = "Select * from up201801019.sensor where contentorid=" + contentorId
+        executar(db, pedido)
+        rec = db.fetchone()
 
-    if rec == None:
-        print("Não foi encontrado o pedido na DB")
-        return None
-    id = []
+        if rec == None:
+            print("Não foi encontrado o pedido na DB")
+            return None
+        id = []
 
-    id.append(rec[0])
-    for rec in db:
         id.append(rec[0])
+        for rec in db:
+            id.append(rec[0])
 
-    return id
-  except(Exception, psycopg2.DatabaseError) as error:
+        return id
+    except(Exception, psycopg2.DatabaseError) as error:
         print(error)
 
 #               OBTER ID DE TODOS ATUADORES POR CONTENTOR
 
 def get_id_atuador(db, contentorId):
-  try:  
-    pedido = "Select * from up201801019.atuador where contentorid=" + contentorId
-    executar(db, pedido)
-    rec = db.fetchone()
+    try:
+        pedido = "Select * from up201801019.atuador where contentorid=" + contentorId
+        executar(db, pedido)
+        rec = db.fetchone()
 
-    if rec == None:
-        print("Não foi encontrado o pedido na DB")
-        return None
-    id = []
+        if rec == None:
+            print("Não foi encontrado o pedido na DB")
+            return None
+        id = []
 
-    id.append(rec[0])
-    for rec in db:
         id.append(rec[0])
+        for rec in db:
+            id.append(rec[0])
 
-    return id
-  except(Exception, psycopg2.DatabaseError) as error:
+        return id
+    except(Exception, psycopg2.DatabaseError) as error:
         print(error)
 
 #               OBTER VALOR DE TODOS ATUADORES DO CONTENTOR
 
 def get_value_atuadores(contentorId):
-  try:  
-    db, connection = connect(DB())
+    try:
+        db, connection = connect(DB())
 
-    pedido = 'Select * from up201801019.atuador where contentorid=' + str(contentorId)
-    executar(db, pedido)
-    rec = db.fetchall()
-    if rec == None:
-        print("Não foi encontrado o pedido na DB")
-        return None
-    
-    # Close db connection
-    if connection is not None:
-        connection.close()
-    #    print('Database connection closed.')
+        pedido = 'Select * from up201801019.atuador where contentorid=' + str(contentorId)
+        executar(db, pedido)
+        rec = db.fetchall()
+        if rec == None:
+            print("Não foi encontrado o pedido na DB")
+            return None
 
-    return rec
-  except(Exception, psycopg2.DatabaseError) as error:
+        # Close db connection
+        if connection is not None:
+            connection.close()
+        #    print('Database connection closed.')
+
+        return rec
+    except(Exception, psycopg2.DatabaseError) as error:
         print(error)
 '''
 def get_nivel_regra(atuador_id):
@@ -256,127 +256,128 @@ def get_nivel_regra(atuador_id):
     return rec[0]
 
 '''
-    
+
 #               OBTER VALOR DE ATUADOR INDIVIDUAL: IDENTIFICACAO POR ID OU TIPO
 
 
 def get_specific_value_atuador( contentorId, tipe, atuadorid):
-  
-  try:
-    db, connection = connect(DB())
 
-    if atuadorid == None:
-        pedido = "Select valor_atual from up201801019.atuador where contentorid=" + contentorId + " and tipo='" + tipe + "'"
-    else:
-        pedido = "Select valor_atual from up201801019.atuador where contentorid=" + contentorId + " and atuadid='" + atuadorid + "'"
-    executar(db, pedido)
-    rec = db.fetchone()
-    
+    try:
+        db, connection = connect(DB())
+
+        if atuadorid == None:
+            pedido = "Select valor_atual from up201801019.atuador where contentorid=" + contentorId + " and tipo='" + tipe + "'"
+        else:
+            pedido = "Select valor_atual from up201801019.atuador where contentorid=" + contentorId + " and atuadid='" + atuadorid + "'"
+        executar(db, pedido)
+        rec = db.fetchone()
+
         # Close db connection
-    if connection is not None:
-        connection.close()
-    #    print('Database connection closed.')
+        if connection is not None:
+            connection.close()
+        #    print('Database connection closed.')
 
-    if rec == None:
-        print("Não foi encontrado o pedido na DB")
-        return None
+        if rec == None:
+            print("Não foi encontrado o pedido na DB")
+            return None
 
-    return rec[0]
-  except(Exception, psycopg2.DatabaseError) as error:
+        return rec[0]
+    except(Exception, psycopg2.DatabaseError) as error:
         print(error)
 
 #               DEFINE VALOR DE TODOS SENSORES DO CONTENTOR
 
 
 def send_values_sensores(db, connection, contentorId, tipo, valor_atual):
-  try:   
-    for i in range(len(tipo)):
-        pedido = "Update up201801019.sensor SET valor_atual = " + str(
-            valor_atual[i]) + " where contentorid=' " + contentorId + "' and tipo='" + tipo[i] + "'"
-        
-        executequery(db, connection, pedido)
-    # rec = db.fetchone()
-    # if rec == None:
-    #   print("Não foi encontrado o pedido na DB")
-    #  return -1
+    try:
+        for i in range(len(tipo)):
+            pedido = "Update up201801019.sensor SET valor_atual = " + str(
+                valor_atual[i]) + " where contentorid=' " + contentorId + "' and tipo='" + tipo[i] + "'"
 
-    return 1
-  except(Exception, psycopg2.DatabaseError) as error:
+            executequery(db, connection, pedido)
+        # rec = db.fetchone()
+        # if rec == None:
+        #   print("Não foi encontrado o pedido na DB")
+        #  return -1
+
+        return 1
+    except(Exception, psycopg2.DatabaseError) as error:
         print(error)
 #               DEFINE VALOR DE SENSOR INDIVIDUAL: IDENTIFICACAO POR ID
 
 def set_value_sensor( sensid, tempo, valor):
-  try:
-    db, connection = connect(DB())
+    try:
+        db, connection = connect(DB())
 
-    query = "INSERT INTO up201801019.historico_sensor(data_hora, medição, sensID) VALUES ('"+ tempo +"'," + str(valor) + ", " + str(sensid) +");"
-  #  print(query)
-    result = executequery(db, connection, query)
+        query = "INSERT INTO up201801019.historico_sensor(data_hora, medição, sensID) VALUES ('"+ tempo +"'," + str(valor) + ", " + str(sensid) +");"
+        #  print(query)
+        result = executequery(db, connection, query)
 
-    query = "UPDATE up201801019.sensor SET valor_atual = "+ str(valor) + " WHERE sensid = " + str(sensid) + ";"
-    print
-    result = executequery(db, connection, query)
+        query = "UPDATE up201801019.sensor SET valor_atual = "+ str(valor) + " WHERE sensid = " + str(sensid) + ";"
+        print
+        result = executequery(db, connection, query)
 
-    
-    # Close db connection
-    if connection is not None:
-        connection.close()
-        #print('Database connection closed.')
 
-    return result
-  except(Exception, psycopg2.DatabaseError) as error:
-        print(error)
-
-def get_timings(cont_id):
-  try:   
-    db, connection = connect(DB())
-
-    pedido = "Select refresh_rate_sensores, atuatores_min_time from up201801019.contentor where contentorid =" + str(cont_id)
-    executar(db, pedido)
-    rec = db.fetchone()
-    
         # Close db connection
-    if connection is not None:
-        connection.close()
-    #    print('Database connection closed.')
+        if connection is not None:
+            connection.close()
+            #print('Database connection closed.')
 
-    if rec == None:
-        print("Não foi encontrado o pedido na DB")
-        return None
-    
-    return rec
-  except(Exception, psycopg2.DatabaseError) as error:
+        return result
+    except(Exception, psycopg2.DatabaseError) as error:
         print(error)
+
+def get_timings(cont_id, timing_sens, timing_actu):
+    try:
+        db, connection = connect(DB())
+
+        pedido = "Select refresh_rate_sensores, atuatores_min_time from up201801019.contentor where contentorid =" + str(cont_id)
+        executar(db, pedido)
+        rec = db.fetchone()
+
+        # Close db connection
+        if connection is not None:
+            connection.close()
+        #    print('Database connection closed.')
+
+        if rec == None:
+            print("Não foi encontrado o pedido na DB")
+            return None
+
+        return rec
+    except(Exception, psycopg2.DatabaseError) as error:
+        print(error)
+        return timing_sens, timing_actu
 #               DEFINE VALOR DE ATUADOR INDIVIDUAL: IDENTIFICACAO POR ID
 
 def set_value_atuador( atuadorid,  tempo,valor):
-  try:   
-    db, connection = connect(DB())
+    try:
+        db, connection = connect(DB())
 
-    query = "INSERT INTO up201801019.historico_atuador(data_hora, estado, atuadID) VALUES ('"+ tempo + "',"+ str(valor) +" ," + str(atuadorid) +");"
-    #print(query)
-    result = executequery(db, connection, query)
+        query = "INSERT INTO up201801019.historico_atuador(data_hora, estado, atuadID) VALUES ('"+ tempo + "',"+ str(valor) +" ," + str(atuadorid) +");"
+        #print(query)
+        result = executequery(db, connection, query)
 
-    query = "UPDATE up201801019.atuador SET valor_atual = "+ str(valor) + " WHERE atuadid = " + str(atuadorid) + ";"
-    result = executequery(db, connection, query)
-    if connection is not None:
-        connection.close()
-        #print('Database connection closed.')
+        query = "UPDATE up201801019.atuador SET valor_atual = "+ str(valor) + " WHERE atuadid = " + str(atuadorid) + ";"
+        result = executequery(db, connection, query)
+        if connection is not None:
+            connection.close()
+            #print('Database connection closed.')
 
-    return result
-  except(Exception, psycopg2.DatabaseError) as error:
+        return result
+    except(Exception, psycopg2.DatabaseError) as error:
         print(error)
 #               INSERE ALARME
 
 def add_alarm(db, connection, contentorid, tempo, prioridade, texto):
-  try:
-    query = "INSERT INTO up201801019.alarme(data_hora, prioridade, descrição, contentorid) VALUES ('"+ tempo + "',"+ str(prioridade) +" ,'" + texto +"', "+ str(contentorid) + ");"
-    print(query)
-    result = executequery(db, connection, query)
+    try:
+        query = "INSERT INTO up201801019.alarme(data_hora, prioridade, descrição, contentorid) VALUES ('"+ tempo + "',"+ str(prioridade) +" ,'" + texto +"', "+ str(contentorid) + ");"
+        print(query)
+        result = executequery(db, connection, query)
 
-    return result
+        return result
 
-  except(Exception, psycopg2.DatabaseError) as error:
+    except(Exception, psycopg2.DatabaseError) as error:
         print(error)
 #               ZONA DE TESTE/DEBUG
 '''
