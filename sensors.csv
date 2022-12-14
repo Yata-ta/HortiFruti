@@ -1,6 +1,5 @@
-Type,id,Current_Value,Min,Max
-temperatura,5, 10, 0, 100
-humidade,6, 10, 0, 100
-CO2,7, 10, 0, 100
-O2,8, 10, 0, 100
-pressão,9, 10, 0, 100
+,Type,id,Current_Value,Min,Max
+0,humidade,2,-21.0,4.0,16.0
+1,O2,4,-27.0,0.0,10.0
+2,CO2,3,44.0,0.0,5.0
+3,temperatura,1,55.0,10.0,16.0
