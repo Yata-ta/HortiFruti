@@ -100,4 +100,4 @@ class Actuator:
     
     def set_value(self,new_value):
         self.value = new_value
-        return self.value
+        return self.value 
