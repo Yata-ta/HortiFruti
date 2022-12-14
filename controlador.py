@@ -378,6 +378,8 @@ def verifica_contentor( raspberry_id):
 contentor_ids = None
 raspberry_id = 1
 time_begin_sens = [0,0]
+timing_sens = 10
+timing_actu = 10
 
 global db_connected
 aux_db = get_id_contentores(raspberry_id)
@@ -415,10 +417,9 @@ while 1:
     time_date = strftime("%Y-%m-%d %H:%M:%S", gmtime())
 
     for i in range(len(contentor_ids)):
-       print("\n-------   contentor: ", contentor_ids[i],"   -------") 
-       timing_sens, timing_actu = get_timings(contentor_ids[i])
-       time_begin_sens[i], sensor[i] = atualiza_sensores(contentor_ids[i], sensor[i], time_date, time_begin_sens[i])
-       control_atuatores(sensor[i], atuadores[i],contentor_ids[i],time_date) 
+        print("\n-------   contentor: ", contentor_ids[i],"   -------")
+        timing_sens, timing_actu = get_timings(contentor_ids[i], timing_sens, timing_actu)
+        time_begin_sens[i], sensor[i] = atualiza_sensores(contentor_ids[i], sensor[i], time_date, time_begin_sens[i])
+        control_atuatores(sensor[i], atuadores[i],contentor_ids[i],time_date)
     time.sleep(2)
        
-    
