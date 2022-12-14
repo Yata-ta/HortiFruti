@@ -43,8 +43,27 @@ if __name__ == '__main__':
 
             if (temp_value >= temp_max):
                 modules.functions.print_y("Door Open")
+            
+#             Door Open
+#                 try:
+#                     servo1.ChangeDutyCycle(7)
+#                     time.sleep(0.5)
+#                     servo1.ChangeDutyCycle(0)
+#                 finally:
+#                     servo1.stop()
+#                     GPIO.cleanup()
+                
             if (temp_value <= temp_min):
                 modules.functions.print_y("Door Close")
+                
+#             Door Close
+#                 try:
+#                     servo1.ChangeDutyCycle(2)
+#                     time.sleep(0.5)
+#                     servo1.ChangeDutyCycle(0)
+#                 finally:
+#                     servo1.stop()
+#                     GPIO.cleanup()
             
              # SAFETY DEBUG MODE, TO NOT FLOOD THE DATABASE
             if check_params == 1:
