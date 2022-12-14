@@ -12,7 +12,7 @@ import time
 import board
 import adafruit_bme680
 import smbus
-from classes import *
+from .classes import *
 
 # prints error [local]
 def print_r(str):
@@ -121,7 +121,7 @@ def initialize_system():
     cl.init(autoreset=True)
     try: 
         # ASCII art
-        f = open('header.txt', 'r')
+        f = open('../rep/header.txt', 'r')
         print(f.read())
         f.close()
     except:
