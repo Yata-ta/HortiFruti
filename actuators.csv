@@ -1,5 +1,4 @@
-Type,id,Current_Value,Min,Max
-Ventoinha,1, 0, 0, 1
-Frigorifico,2, 0, 0, 1
-Porta,3, 0, 0, 1
-
+,Type,id,Current_Value,dashboard
+0,Frigorifico,5,0,0
+1,Ventoinha,4,1,0
+2,Porta,6,1,0
