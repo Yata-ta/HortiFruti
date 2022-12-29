@@ -6,11 +6,17 @@ import os
 import modules.db_control
 import modules.database 
 import modules.functions
+import modules.classes
 import simulator
+
+alarm_pin = 25 ## red
+
+COUNTRY = "PT"
 
 contentor_ids = None
 raspberry_id = 1
 sensor = []
+sensor_values = []
 atuadores = []
 timer = []
 
@@ -32,42 +38,34 @@ if __name__ == '__main__':
 
         print("Starting local execution...")
         modules.functions.initialize_real_sensors()
+        relay_module = modules.classes.Relay(1) # relay module of room 1
 
         while True:
 
             time_date = modules.database.strftime("%Y-%m-%d %H:%M:%S", modules.database.gmtime())
             # read temperature values
-            temp_value,gas_value,humidity_value,pressure_value = modules.functions.read_real_sensors("PT")
+            sensor_values = modules.functions.read_real_sensors(COUNTRY)
 
-            print(f"{temp_min} < {temp_value:.2f} < {temp_max}")
+            print(f"CO2: {sensor_values[4]}")
+            print(f"Humidity: {sensor_values[2]}")
+            # print(f"{temp_min} < {temp_value:.2f} < {temp_max}")
 
-            if (temp_value >= temp_max):
-                modules.functions.print_y("Door Open")
-            
-#             Door Open
-#                 try:
-#                     servo1.ChangeDutyCycle(7)
-#                     time.sleep(0.5)
-#                     servo1.ChangeDutyCycle(0)
-#                 finally:
-#                     servo1.stop()
-#                     GPIO.cleanup()
+            #TODO create atuator logic function in functions...
+
+            if (sensor_values[0] >= temp_max):
+                ## Make the room colder --> turn on frizzer
+                relay_module.turn_on_relay_2()
                 
-            if (temp_value <= temp_min):
-                modules.functions.print_y("Door Close")
-                
-#             Door Close
-#                 try:
-#                     servo1.ChangeDutyCycle(2)
-#                     time.sleep(0.5)
-#                     servo1.ChangeDutyCycle(0)
-#                 finally:
-#                     servo1.stop()
-#                     GPIO.cleanup()
+            if (sensor_values[0] <= temp_min):
+                ## temperature too low --> turn off frizzer
+                relay_module.turn_off_relay_2()
             
+            if f"{time_date[17]}{time_date[18]}" == "59": ## test alarm led 
+                modules.functions.alarm(alarm_pin,"on")
+
              # SAFETY DEBUG MODE, TO NOT FLOOD THE DATABASE
             if check_params == 1:
-                modules.db_control.set_value_sensor(1,time_date,temp_value)
+                modules.db_control.set_value_sensor(1,time_date,sensor_values[0])
 
     elif rtn == 2:
         while True:

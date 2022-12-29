@@ -11,8 +11,9 @@ import time
 import colorama as cl
 import socket
 import pickle
+import RPi.GPIO as GPIO
 
-# Creates de client for comunication with the server 
+# Creates de client for comunication with the server !! Deprecated !!
 class Client():
     def __init__(self):
         self.host = socket.gethostname()
@@ -29,8 +30,8 @@ class Client():
     def close(self):
         self.socket.close()
 
-# Server class which will output information form the simulator
-class Server():
+# Server class which will output information form the simulator !! Deprecated !!
+class Server(): 
     def __init__(self):
         self.host = socket.gethostname()
         self.port = 2022
@@ -63,7 +64,6 @@ class Sensor:
         return self.name
 
     def start_increase_value(self):
-        #self.value = r.gauss(self.max,self.min)
         aux = self.min
         self.value = aux + 0.8
         self.min = self.value
@@ -143,3 +143,50 @@ class Timer:
 
     def print(self):
         print(time.time() - self.time)
+
+class Relay:
+    def __init__(self, room):
+        # ATTENTION GPIO NUMBER ARE IN BCM MODE !!
+        self.room = room
+        self.relay_1 = 6 ## green
+        self.relay_2 = 13 ## blue
+        self.relay_3 = 19 ## white
+        self.relay_4 = 26 ## yellow
+        #...#
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setup(self.relay_1, GPIO.OUT)
+        GPIO.setup(self.relay_2, GPIO.OUT)
+        GPIO.setup(self.relay_3, GPIO.OUT)
+        GPIO.setup(self.relay_4, GPIO.OUT)
+        #...#
+
+    def get_room(self):
+        return self.room
+    
+    def turn_on_relay_1(self): # then turn on
+        GPIO.output(self.relay_1, True)
+
+    def turn_off_relay_1(self): # and turn off
+        GPIO.output(self.relay_1, False)
+
+    def turn_on_relay_2(self): # then turn on
+        GPIO.output(self.relay_2, True)
+
+    def turn_off_relay_2(self): # and turn off
+        GPIO.output(self.relay_2, False)
+    
+    def turn_on_relay_3(self): # then turn on
+        GPIO.output(self.relay_3, True)
+
+    def turn_off_relay_3(self): # and turn off
+        GPIO.output(self.relay_3, False)
+    
+    def turn_on_relay_4(self): # then turn on
+        GPIO.output(self.relay_4, True)
+
+    def turn_off_relay_4(self): # and turn off
+        GPIO.output(self.relay_4, False)
+
+
+    
+        

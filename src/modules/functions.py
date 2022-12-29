@@ -8,9 +8,12 @@ import colorama as cl
 import platform
 import logging
 import threading
+import atexit
 import time
+import RPi.GPIO as GPIO
 import board
 import adafruit_bme680
+import adafruit_ens160
 import smbus
 from .classes import *
 
@@ -152,15 +155,24 @@ def initialize_real_sensors():
     @param\n
     Location - defines the geographical location of the raspberry, supported locations = [PT] & [BR]
     """
-    bus = smbus.SMBus(1)
     i2c = board.I2C()  # uses board.SCL and board.SDA
 
     try:
+        global bme680 
         bme680 = adafruit_bme680.Adafruit_BME680_I2C(i2c, debug=False)
         print("[" + cl.Fore.GREEN + "OK" + cl.Fore.WHITE + "]" + "- BME680 connected")
 
     except:
-        print("[" + cl.Fore.RED + "NOT FOUND" + cl.Fore.WHITE + "]" + "- BME680 not found") 
+        print("[" + cl.Fore.RED + "NOT FOUND" + cl.Fore.WHITE + "]" + "- BME680 not found")
+        pass
+
+    try:
+        global ens160
+        ens160 = adafruit_ens160.ENS160(i2c)
+        print("[" + cl.Fore.GREEN + "OK" + cl.Fore.WHITE + "]" + "- ENS160 connected")
+
+    except:
+        print("[" + cl.Fore.RED + "NOT FOUND" + cl.Fore.WHITE + "]" + "- ENS160 not found")  
         pass
 
 def read_real_sensors(Location: str):
@@ -169,14 +181,12 @@ def read_real_sensors(Location: str):
     @param\n
     Location - defines the geographical location of the raspberry, supported locations = [PT] & [BR]
     @return\n
-    [1] - Temperature in celsius\n
-    [2] - Gas\n
-    [3] - Humidity\n
-    [4] - Pressure in hPa\n
+    [0] - Temperature in celsius\n
+    [1] - Gas\n
+    [2] - Humidity\n
+    [3] - Pressure in hPa\n
+    [4] - eC02 in ppm\n
     """
-    bus = smbus.SMBus(1)
-    i2c = board.I2C()  # uses board.SCL and board.SDA
-    bme680 = adafruit_bme680.Adafruit_BME680_I2C(i2c, debug=False)
 
     try:
         # Calibration of pressure
@@ -189,9 +199,20 @@ def read_real_sensors(Location: str):
             bme680.sea_level_pressure = 1012.5
         else: 
             print_r(f"ERROR-[4] : Location '{Location}' not found or invalid")
+
         # temperature calibration
         temperature_offset = -5
-        return bme680.temperature + temperature_offset, bme680.gas, bme680.relative_humidity, bme680.pressure
+
+        # Set the temperature compensation variable to the ambient temp
+        # for best sensor calibration
+        #ens160.temperature_compensation = bme680.temperature + temperature_offset
+        ens160.temperature_compensation = bme680.temperature + temperature_offset
+
+        # Same for ambient relative humidity
+        # ens160.humidity_compensation = bme680.humidity
+        ens160.humidity_compensation = bme680.relative_humidity
+
+        return bme680.temperature + temperature_offset, bme680.gas, bme680.relative_humidity, bme680.pressure, ens160.eCO2
         
     except:
         print_r(f"ERROR-[5] : Unable to start real sensors ")
@@ -221,3 +242,45 @@ def start(argv)->int:
             print("DEBUG - for debug process (this mode will protect the database from flooding)")
             print("NORMAL - for normal program execution")
             print("EXAMPLE - $ sudo python3 main.py DEBUG") 
+
+def alarm(pin, mode = "off"):
+    '''
+    Turns on and off the alarm led (red led) #
+    set the correct pin on the GPIO, remember is BCM!
+    mode = on --> led on
+    mode = off --> led off 
+    '''
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(pin, GPIO.OUT)
+
+    if mode == "on":
+        GPIO.output(pin, True)
+    else:
+        GPIO.output(pin, False)
+
+@atexit.register
+def termination_handler():
+    print(cl.Fore.LIGHTRED_EX +"Exiting program", end='')
+    # set all pins back to default 
+    GPIO.cleanup()
+    time.sleep(0.5)
+    print(cl.Fore.LIGHTRED_EX +".", end="")
+    time.sleep(0.5)
+    print(cl.Fore.LIGHTRED_EX +".", end="")
+    time.sleep(0.5)
+    print(cl.Fore.LIGHTRED_EX +".", end="")
+    time.sleep(0.5)
+    print(cl.Fore.LIGHTRED_EX +"Done")
+
+
+def atuator_logic(room: int, relay_module, real_values: list, limits_values: list):
+    try:
+        if (real_values[0] >= limits_values[0]):
+            ## Make the room colder --> turn on frizzer
+            relay_module.turn_on_relay_2()
+                
+        if (real_values[0] <= limits_values[0]):
+            ## temperature too low --> turn off frizzer
+            relay_module.turn_off_relay_2()
+    except:
+        pass
