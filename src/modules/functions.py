@@ -182,6 +182,7 @@ def initialize_real_sensors():
 
 
 def get_OxygenValues() -> float:
+        print("OI")
         BAUD_RATE = 9600
         TIMEOUT = 5
         #PORT = "/dev/ttyACM0"
