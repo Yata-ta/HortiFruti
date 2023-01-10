@@ -194,6 +194,7 @@ def get_OxygenValues() -> float:
         msg = "0"
         
         ser = serial.Serial(PORT, BAUD_RATE, timeout = TIMEOUT) # Open the serial port
+        print("OI2")
         ser.open()
         print("ABRIU")
         ser.writelines(msg.encode())    # Send the message
