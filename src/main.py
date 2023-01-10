@@ -46,6 +46,7 @@ if __name__ == '__main__':
             # read temperature values
             sensor_values = modules.functions.read_real_sensors(COUNTRY)
 
+            print(f"O2: {sensor_values[5]}")
             print(f"CO2: {sensor_values[4]}")
             print(f"Humidity: {sensor_values[2]}")
             # print(f"{temp_min} < {temp_value:.2f} < {temp_max}")
