@@ -194,7 +194,7 @@ def get_OxygenValues() -> float:
         msg = "0"
         
         ser = serial.Serial(PORT, BAUD_RATE, timeout = TIMEOUT) # Open the serial port
-        print("OI2")
+        
         #ser.open()
         print("ABRIU")
         ser.writelines(msg.encode())    # Send the message
@@ -210,7 +210,7 @@ def get_OxygenValues() -> float:
                                 value = aux[1]    # Oxygen Sensor Data
                                 ser.flush()
                                 waiting = False
-                        
+        print("End LOOP")              
         if waiting == False:
                 ser.writelines("2")
         
