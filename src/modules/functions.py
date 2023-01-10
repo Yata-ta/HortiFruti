@@ -16,6 +16,7 @@ import adafruit_bme680
 import adafruit_ens160
 import smbus
 from .classes import *
+import serial
 
 # prints error [local]
 def print_r(str):
@@ -175,6 +176,44 @@ def initialize_real_sensors():
         print("[" + cl.Fore.RED + "NOT FOUND" + cl.Fore.WHITE + "]" + "- ENS160 not found")  
         pass
 
+
+
+
+
+
+def get_OxygenValues() -> float:
+        BAUD_RATE = 9600
+        TIMEOUT = 5
+        PORT = "/dev/ttyACM0"
+        SEPERATOR = "|"
+    
+        value = 0.0
+        waiting = True
+        msg = "0"
+        
+        ser = serial.Serial(PORT, BAUD_RATE, timeout = TIMEOUT) # Open the serial port
+        ser.open()
+        ser.writelines(msg.encode())    # Send the message
+        start = time.time()
+        while (time.time() - start) < 10000 or waiting == True:
+       
+                if (ser.in_waiting() > 0):
+                        msg = ser.readline()
+
+                        aux = msg.split(SEPERATOR)
+            
+                        if (len(aux) > 1):
+                                value = aux[1]    # Oxygen Sensor Data
+                                ser.flush()
+                                waiting = False
+                        
+        if waiting == False:
+                ser.writelines("2")
+        
+        ser.close()
+        return value
+
+
 def read_real_sensors(Location: str):
     """
     Read data from the sensors\n
@@ -186,6 +225,7 @@ def read_real_sensors(Location: str):
     [2] - Humidity\n
     [3] - Pressure in hPa\n
     [4] - eC02 in ppm\n
+    [5] - Oxygen
     """
 
     try:
@@ -212,7 +252,7 @@ def read_real_sensors(Location: str):
         # ens160.humidity_compensation = bme680.humidity
         ens160.humidity_compensation = bme680.relative_humidity
 
-        return bme680.temperature + temperature_offset, bme680.gas, bme680.relative_humidity, bme680.pressure, ens160.eCO2
+        return bme680.temperature + temperature_offset, bme680.gas, bme680.relative_humidity, bme680.pressure, ens160.eCO2, get_OxygenValues()
         
     except:
         print_r(f"ERROR-[5] : Unable to start real sensors ")
