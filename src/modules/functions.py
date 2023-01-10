@@ -194,6 +194,7 @@ def get_OxygenValues() -> float:
         
         ser = serial.Serial(PORT, BAUD_RATE, timeout = TIMEOUT) # Open the serial port
         ser.open()
+        print("ABRIU")
         ser.writelines(msg.encode())    # Send the message
         start = time.time()
         while (time.time() - start) < 10000 or waiting == True:
