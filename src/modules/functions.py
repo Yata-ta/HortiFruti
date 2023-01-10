@@ -199,7 +199,7 @@ def get_OxygenValues() -> float:
         print("ABRIU")
         ser.writelines(msg.encode())    # Send the message
         start = time.time()
-        while (time.time() - start) < 10000 or waiting == True:
+        while (time.time() - start) < 10 or waiting == True:
        
                 if (ser.in_waiting() > 0):
                         msg = ser.readline()
