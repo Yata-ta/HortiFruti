@@ -185,7 +185,7 @@ def get_OxygenValues() -> float:
         BAUD_RATE = 9600
         TIMEOUT = 5
         #PORT = "/dev/ttyACM0"
-        PORT = "COM1"
+        PORT = "/dev/ttyACM0"
         SEPERATOR = "|"
     
         value = 0.0
