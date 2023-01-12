@@ -214,7 +214,7 @@ def get_OxygenValues() -> float:
         if waiting == False:
                 ser.writelines("2")
         
-        ser.close()
+        #ser.close()
         return value
 
 
@@ -256,7 +256,8 @@ def read_real_sensors(Location: str):
         # ens160.humidity_compensation = bme680.humidity
         ens160.humidity_compensation = bme680.relative_humidity
 
-        return bme680.temperature + temperature_offset, bme680.gas, bme680.relative_humidity, bme680.pressure, ens160.eCO2, get_OxygenValues()
+        #return bme680.temperature + temperature_offset, bme680.gas, bme680.relative_humidity, bme680.pressure, ens160.eCO2, get_OxygenValues()
+        return bme680.temperature + temperature_offset, bme680.gas, bme680.relative_humidity, bme680.pressure, ens160.eCO2
         
     except:
         print_r(f"ERROR-[5] : Unable to start real sensors ")
