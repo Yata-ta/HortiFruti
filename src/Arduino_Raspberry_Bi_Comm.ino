@@ -81,7 +81,7 @@ void loop() {
   }else if (mode == 1){
 
       /*Format
-        mode|Temp|Hum|Oxy*/
+        mode|Temp|Hum|Oxy
       temperature_switch = data.charAt(2) - '0';
       humidity_switch = data.charAt(4) - '0';
       oxigenio_switch = data.charAt(6) - '0';
@@ -94,6 +94,7 @@ void loop() {
       Serial.println();
 
       stringOne = "";
+      */
 
   }else if (mode == 2){
     
