@@ -1,3 +1,4 @@
+
 ## *************************************** ##
         ## Function Repository file ##
 ## *************************************** ##
@@ -16,15 +17,25 @@ import adafruit_bme680
 import adafruit_ens160
 import smbus
 from .classes import *
-import serial
+
+from time import sleep
+from gpiozero.pins.pigpio import PiGPIOFactory
+from gpiozero import Servo
+
+factory = PiGPIOFactory()
+servo = Servo(23, pin_factory=factory)
 
 # prints error [local]
 def print_r(str):
     print(cl.Back.RED + str)
+    print(cl.Style.RESET_ALL)
+
 
 # prints in yellow [local]
 def print_y(str):
     print(cl.Fore.YELLOW + str)
+    print(cl.Style.RESET_ALL)
+
 
 # print for the chamber simulator
 def print_chamber(sensors_names,values,actuators_names,act_values):
@@ -134,6 +145,9 @@ def initialize_system():
     try:
         if platform.uname()[4].startswith("aarch64"):
             print(cl.Back.GREEN + f"Executing on {platform.uname()[4]}")
+            ## Set relays pins mode to default 
+            relay_module = Relay(1)
+            relay_module.deafult_state()
             return 1
         else:
             print_r("ERROR-[2] : Didn't found an ARM chip 'BCM***' module, please execute me in Raspberry Pi or similar...")
@@ -176,48 +190,6 @@ def initialize_real_sensors():
         print("[" + cl.Fore.RED + "NOT FOUND" + cl.Fore.WHITE + "]" + "- ENS160 not found")  
         pass
 
-
-
-
-
-
-def get_OxygenValues() -> float:
-        print("OI")
-        BAUD_RATE = 9600
-        TIMEOUT = 5
-        #PORT = "/dev/ttyACM0"
-        PORT = "/dev/ttyAMA0"
-        SEPERATOR = "|"
-    
-        value = 0.0
-        waiting = True
-        msg = "0"
-        
-        ser = serial.Serial(PORT, BAUD_RATE, timeout = TIMEOUT) # Open the serial port
-        
-        #ser.open()
-        print("ABRIU")
-        ser.writelines(msg.encode())    # Send the message
-        start = time.time()
-        while (time.time() - start) < 10 or waiting == True:
-       
-                if (ser.in_waiting() > 0):
-                        msg = ser.readline()
-
-                        aux = msg.split(SEPERATOR)
-            
-                        if (len(aux) > 1):
-                                value = aux[1]    # Oxygen Sensor Data
-                                ser.flush()
-                                waiting = False
-        print("End LOOP")              
-        if waiting == False:
-                ser.writelines("2")
-        
-        #ser.close()
-        return value
-
-
 def read_real_sensors(Location: str):
     """
     Read data from the sensors\n
@@ -229,7 +201,6 @@ def read_real_sensors(Location: str):
     [2] - Humidity\n
     [3] - Pressure in hPa\n
     [4] - eC02 in ppm\n
-    [5] - Oxygen
     """
 
     try:
@@ -256,7 +227,6 @@ def read_real_sensors(Location: str):
         # ens160.humidity_compensation = bme680.humidity
         ens160.humidity_compensation = bme680.relative_humidity
 
-        #return bme680.temperature + temperature_offset, bme680.gas, bme680.relative_humidity, bme680.pressure, ens160.eCO2, get_OxygenValues()
         return bme680.temperature + temperature_offset, bme680.gas, bme680.relative_humidity, bme680.pressure, ens160.eCO2
         
     except:
@@ -307,7 +277,9 @@ def alarm(pin, mode = "off"):
 def termination_handler():
     print(cl.Fore.LIGHTRED_EX +"Exiting program", end='')
     # set all pins back to default 
-    GPIO.cleanup()
+    relay_module = Relay(1)
+    relay_module.deafult_state()
+    GPIO.setup(25, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
     time.sleep(0.5)
     print(cl.Fore.LIGHTRED_EX +".", end="")
     time.sleep(0.5)
@@ -316,6 +288,7 @@ def termination_handler():
     print(cl.Fore.LIGHTRED_EX +".", end="")
     time.sleep(0.5)
     print(cl.Fore.LIGHTRED_EX +"Done")
+    print(cl.Style.RESET_ALL)
 
 
 def atuator_logic(room: int, relay_module, real_values: list, limits_values: list):
@@ -329,3 +302,72 @@ def atuator_logic(room: int, relay_module, real_values: list, limits_values: lis
             relay_module.turn_off_relay_2()
     except:
         pass
+
+def actuate_servo():
+    print(cl.Style.RESET_ALL)
+    try:
+        print(f"servo value: {servo.value}")
+        if servo.value == -0.0: # servo on closed position
+            servo.max() # open servo
+            print(f"servo value max: {servo.value}")
+
+        elif servo.value == 1.0: # servo is open 
+            servo.mid() # close servo
+            print(f"servo value mid: {servo.value}")
+        
+        else:
+            print(cl.Back.RED + "[ERROR - 7] - Invalid servo position")
+
+    except:
+        print(cl.Back.RED + "[ERROR - 6] - Error turning futaba servo")
+        print(cl.Style.RESET_ALL)
+
+def initial_components_test():
+    '''
+    EXECUTE OUT OF THE MAIN LOOP
+    This function tests the actuation of the circut components
+    -> futaba servo : open--2s--close--2s
+    -> relays : x--on--1s--of--1s [x = relay number]
+    -> Alarm : on--0.5s--0ff--0.5s--on--0.5s--off 
+    '''
+
+    print("****SERVO TEST****")
+    actuate_servo()
+    sleep(1)
+    actuate_servo()
+    sleep(1)
+    print("***DONE!***")
+    print()
+    print("****RELAY TEST****")
+    relay_module = Relay(1)
+
+    relay_module.turn_on_relay_1()
+    sleep(1)
+    relay_module.turn_off_relay_1()
+
+    relay_module.turn_on_relay_2()
+    sleep(1)
+    relay_module.turn_off_relay_2()
+
+    relay_module.turn_on_relay_3()
+    sleep(1)
+    relay_module.turn_off_relay_3()
+    
+    relay_module.turn_on_relay_4()
+    sleep(1)
+    relay_module.turn_off_relay_4()
+    print("***DONE!***")
+    print()
+
+    alarm_pin = 25 ## red
+    print(f"****ALARM TEST on pin {alarm_pin}****")
+    alarm(alarm_pin,"on")
+    sleep(0.5)
+    alarm(alarm_pin,"off")
+    sleep(0.5)
+    alarm(alarm_pin,"on")
+    sleep(0.5)
+    alarm(alarm_pin,"off")
+    print("***DONE!***")
+    print()
+

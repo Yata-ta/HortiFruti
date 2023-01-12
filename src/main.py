@@ -1,3 +1,4 @@
+
 import colorama as cl
 import sys
 import os
@@ -29,6 +30,8 @@ if __name__ == '__main__':
     
     rtn = modules.functions.initialize_system()
 
+    modules.functions.initial_components_test()
+
     sensor = modules.db_control.define_sensors(1)
     _,temp_max,temp_min = modules.db_control.get_temperatura_info(sensor)
     
@@ -46,20 +49,21 @@ if __name__ == '__main__':
             # read temperature values
             sensor_values = modules.functions.read_real_sensors(COUNTRY)
 
-            print(f"O2: {sensor_values[5]}")
-            print(f"CO2: {sensor_values[4]}")
-            print(f"Humidity: {sensor_values[2]}")
-            # print(f"{temp_min} < {temp_value:.2f} < {temp_max}")
+            #print(f"CO2: {sensor_values[4]}")
+            #print(f"Humidity: {sensor_values[2]}")
+            print(f"{temp_min} < {sensor_values[0]:.2f} < {temp_max}")
 
             #TODO create atuator logic function in functions...
 
             if (sensor_values[0] >= temp_max):
                 ## Make the room colder --> turn on frizzer
                 relay_module.turn_on_relay_2()
+                pass
                 
             if (sensor_values[0] <= temp_min):
                 ## temperature too low --> turn off frizzer
                 relay_module.turn_off_relay_2()
+                pass
             
             if f"{time_date[17]}{time_date[18]}" == "59": ## test alarm led 
                 modules.functions.alarm(alarm_pin,"on")
@@ -81,3 +85,4 @@ if __name__ == '__main__':
                 break
             else:
                 print("...invalid input...")
+
