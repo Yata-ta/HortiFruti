@@ -154,38 +154,48 @@ class Relay:
         self.relay_4 = 26 ## yellow
         #...#
         GPIO.setmode(GPIO.BCM)
-        GPIO.setup(self.relay_1, GPIO.OUT)
-        GPIO.setup(self.relay_2, GPIO.OUT)
-        GPIO.setup(self.relay_3, GPIO.OUT)
-        GPIO.setup(self.relay_4, GPIO.OUT)
         #...#
 
     def get_room(self):
         return self.room
     
-    def turn_on_relay_1(self): # then turn on
-        GPIO.output(self.relay_1, True)
+    def deafult_state(self):
+        GPIO.setup(self.relay_1, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        GPIO.setup(self.relay_2, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        GPIO.setup(self.relay_3, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        GPIO.setup(self.relay_4, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
-    def turn_off_relay_1(self): # and turn off
+    def turn_on_relay_1(self): # then turn on
+        GPIO.setup(self.relay_1, GPIO.OUT)
         GPIO.output(self.relay_1, False)
 
+    def turn_off_relay_1(self): # and turn off
+        GPIO.setup(self.relay_1, GPIO.OUT)
+        GPIO.output(self.relay_1, True)
+
     def turn_on_relay_2(self): # then turn on
-        GPIO.output(self.relay_2, True)
+        GPIO.setup(self.relay_2, GPIO.OUT)
+        GPIO.output(self.relay_2, False)
 
     def turn_off_relay_2(self): # and turn off
-        GPIO.output(self.relay_2, False)
+        GPIO.setup(self.relay_2, GPIO.OUT)
+        GPIO.output(self.relay_2, True)
     
     def turn_on_relay_3(self): # then turn on
-        GPIO.output(self.relay_3, True)
+        GPIO.setup(self.relay_3, GPIO.OUT)
+        GPIO.output(self.relay_3, False)
 
     def turn_off_relay_3(self): # and turn off
-        GPIO.output(self.relay_3, False)
+        GPIO.setup(self.relay_3, GPIO.OUT)
+        GPIO.output(self.relay_3, True)
     
     def turn_on_relay_4(self): # then turn on
-        GPIO.output(self.relay_4, True)
+        GPIO.setup(self.relay_4, GPIO.OUT)
+        GPIO.output(self.relay_4, False)
 
     def turn_off_relay_4(self): # and turn off
-        GPIO.output(self.relay_4, False)
+        GPIO.setup(self.relay_4, GPIO.OUT)
+        GPIO.output(self.relay_4, True)
 
 
     
