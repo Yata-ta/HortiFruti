@@ -19,7 +19,7 @@ yes | sudo apt-get install --upgrade python3-pip
 #sudo pip install --upgrade pip
 yes | sudo pip install --upgrade setuptools
 
-YES | sudo pip install --upgrade pigpiod
+yes | sudo pip install --upgrade pigpiod
 
 
 # Get Username by Input
@@ -84,3 +84,4 @@ sudo pigpiod
 #####################################################
 cd /home/$USERNAME/HortiFruiti/src/
 sudo python3 main.py DEBUG
+#sudo python3 main.py NORMAL
