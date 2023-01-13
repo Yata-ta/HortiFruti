@@ -1,5 +1,9 @@
+
 echo Initilization Bash Script!
 
+
+#Dependencies Install and Upgrade
+#####################################################
 
 yes | sudo apt-get upgrade
 
@@ -8,14 +12,17 @@ yes | sudo apt-get install --upgrade python3.10
 yes | sudo apt-get install --upgrade python3-pip
 
 
-#get git files
-#TODO
-#get Username instead of "jose" maybe by input
+
+#Get Username by Input
+#####################################################
 
 echo Raspberry Username:
 read USERNAME
 
 
+
+#Git Pull
+#####################################################
 if [ -d "/home/$USERNAME/HortiFruiti" ]; then
     ### Take action if DIR exists ###
 
@@ -23,8 +30,6 @@ else
     ###  $DIR does NOT exists ### 
     mkdir /home/$USERNAME/HortiFruiti
 fi
-
-
 
 
 if [ ! -d /home/$USERNAME/HortiFruiti/.git ] then
@@ -45,6 +50,7 @@ yes | sudo pip install --upgrade setuptools
 
 
 #stdlib Libraries
+#####################################################
 #sudo pip install os
 #sudo pip install random
 #sudo pip install datetime
@@ -58,9 +64,19 @@ yes | sudo pip install --upgrade setuptools
 #sudo pip install multiprocessing
 
 
+#External Libraries
+#####################################################
+sudo pip install --upgrade numpy
+sudo pip install --upgrade pandas
+sudo pip install --upgrade pigpiod
+
+
 #run dependencies
+#####################################################
 sudo pigpiod
 
+
 #run main.py
+#####################################################
 cd /home/$USERNAME/HortiFruiti/src/
 python3 main.py
