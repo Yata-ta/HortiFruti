@@ -9,6 +9,7 @@ import modules.db_control
 import modules.database 
 import modules.functions
 import modules.classes
+import modules.A9comm as A9comm
 import simulator
 
 alarm_pin = 25 ## red
@@ -22,8 +23,9 @@ sensor_values = []
 atuadores = []
 timer = []
 
-if __name__ == '__main__':
+call_number = "+351910649345"
 
+if __name__ == '__main__':
 
     check_params = modules.functions.start(sys.argv)
 
@@ -32,11 +34,14 @@ if __name__ == '__main__':
     
     rtn = modules.functions.initialize_system()
 
-    # modules.functions.initial_components_test()
+    #modules.functions.initial_components_test()
 
     sensor = modules.db_control.define_sensors(1)
     _,temp_max,temp_min = modules.db_control.get_temperatura_info(sensor)
     _,o2_max,o2_min = modules.db_control.get_o2_info(sensor)
+
+
+    A9comm.call(call_number)
     
 
     if rtn == 1:
