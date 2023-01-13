@@ -1,13 +1,13 @@
-/******************************************************\
-        Application Initialization Bash Script                     
-\******************************************************/
+#/******************************************************\#
+         #Application Initialization Bash Script#                     
+#\******************************************************/#
 
 
 echo Initilization Bash Script!
 
 
 
-#Dependencies Install and Upgrade
+# Dependencies Install and Upgrade
 #####################################################
 
 yes | sudo apt-get upgrade
@@ -19,8 +19,10 @@ yes | sudo apt-get install --upgrade python3-pip
 #sudo pip install --upgrade pip
 yes | sudo pip install --upgrade setuptools
 
+YES | sudo pip install --upgrade pigpiod
 
-#Get Username by Input
+
+# Get Username by Input
 #####################################################
 
 echo Raspberry Username:
@@ -29,7 +31,7 @@ read USERNAME
 
 
 
-#Git Pull
+# Git Pull
 #####################################################
 
 if [ -d "/home/$USERNAME/HortiFruiti" ]; then
@@ -52,7 +54,7 @@ else
 fi
 
 
-#Stdlib Libraries
+# Stdlib Libraries
 #####################################################
 #sudo pip install os
 #sudo pip install random
@@ -67,19 +69,18 @@ fi
 #sudo pip install multiprocessing
 
 
-#External Libraries
+# External Libraries
 #####################################################
 sudo pip install --upgrade numpy
 sudo pip install --upgrade pandas
-sudo pip install --upgrade pigpiod
 
 
-#run dependencies
+# Run dependencies
 #####################################################
 sudo pigpiod
 
 
-#run main.py
+# Run main.py
 #####################################################
 cd /home/$USERNAME/HortiFruiti/src/
-python3 main.py
+sudo python3 main.py DEBUG
