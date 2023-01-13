@@ -40,7 +40,6 @@ if __name__ == '__main__':
     _,temp_max,temp_min = modules.db_control.get_temperatura_info(sensor)
     _,o2_max,o2_min = modules.db_control.get_o2_info(sensor)
 
-
     A9comm.call(call_number)
     
 
