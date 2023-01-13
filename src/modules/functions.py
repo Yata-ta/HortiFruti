@@ -190,6 +190,44 @@ def initialize_real_sensors():
         print("[" + cl.Fore.RED + "NOT FOUND" + cl.Fore.WHITE + "]" + "- ENS160 not found")  
         pass
 
+#global previous
+previous = 3.9*19/3.80
+def get_OxygenValues() -> float:
+    
+    global previous
+    BAUD_RATE = 9600
+    TIMEOUT = 5
+    PORT = "/dev/ttyACM0"
+    #PORT = "/dev/ttyAMA0"
+        
+    value = 0.0
+        
+    myports = [tuple(p) for p in list(serial.tools.list_ports.comports())]
+    #print(myports)
+    ser = serial.Serial(PORT, BAUD_RATE, timeout = TIMEOUT) # Open the serial port
+
+    while True:
+        try:
+            msg_recebida = ser.readline().strip().decode("utf-8")
+            break
+      
+        except UnicodeDecodeError:
+            msg_recebida = ser.readline().strip().decode("utf-8")
+            pass  
+        
+    try:
+        value = float(msg_recebida)*19/3.80
+        previous = value
+    
+    except ValueError:
+        value = previous
+
+    if value > 24 or value < 13:
+        value = 3.9*19/3.80
+        
+    return value
+
+
 def read_real_sensors(Location: str):
     """
     Read data from the sensors\n
