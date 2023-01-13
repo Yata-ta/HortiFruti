@@ -8,11 +8,9 @@ import serial.tools.list_ports as port_list
 #for p in ports:
 #    print (p)
 
-def turn_on_serial():
-    ser = serial.Serial("COM3", baudrate=115200, timeout=5)
-    return ser
+ser = serial.Serial("/dev/ttyUSB0", baudrate=115200, timeout=5)
 
-def sendcommand(command, ser):
+def sendcommand(command):
     AT_command = command + "\r"
     ser.write(str(AT_command).encode('ascii'))
     time.sleep(1)
@@ -27,15 +25,15 @@ def sendcommand(command, ser):
         #print("ERROR at sendcommand")
         return ("ERROR at sendcommand")
 
-def initA9(ser):
-    if not ("OK" in (sendcommand("AT",ser))):
+def initA9():
+    if not ("OK" in (sendcommand("AT"))):
         return "ERROR at init AT"
         #print("ERROR: A9 Module not found")
     #else:
         # print("A9 Module Responding")
         # print()
 
-    if not (("OK" in (sendcommand("AT+CMGF=1",ser))) and ("OK" in (sendcommand("AT+CSMP=17,167,0,0",ser)))):  # enable txt reading
+    if not (("OK" in (sendcommand("AT+CMGF=1"))) and ("OK" in (sendcommand("AT+CSMP=17,167,0,0")))):  # enable txt reading
         # print("ERROR: A9 Module not online")
         return "ERROR at init online check"
     #else:
@@ -44,7 +42,7 @@ def initA9(ser):
 
     return "OK"
 
-def sendSMS(message, number, ser):
+def sendSMS(message, number):
     #ser.write(b'AT+CMGS="' + number.encode() + b'"\r')
     #sendcommand("AT+CMGS="+number)
     ser.write(str("AT+CMGS=" + number + "\r").encode('ascii'))
@@ -68,15 +66,15 @@ def playaudio(filename):
     return
 
 #checks if A9 is speaking and returns it as response
-def wait_for_A9(ser):
+def wait_for_A9():
     echo = ser.readline()  # waste the echo
     response_byte = ser.readline()
     return response_byte.decode('ascii')
 
-def call_aux(number,ser):
+def call_aux(number,ser_aux):
     #sendcommand("ATD+" + number)
     ser.flushInput()  # clear serial data in buffer if any
-    if ("OK" in (sendcommand("ATD"+number,ser))):
+    if ("OK" in (sendcommand("ATD"+number))):
         #print("possiible")
         call_status = ser.readline().decode('ascii')
         #print(call_status)
@@ -104,19 +102,19 @@ def call_aux(number,ser):
             if "+CIEV: \"SOUNDER\",1" in call_status:
                 #print("ME: answered")
                 ser.flushInput()
-                playaudio("bill.mp3")
+                playaudio("../rep/bill.mp3")
                 #threading.Timer(30, sendcommand("ATH")).start()
-                time.sleep(120)
-                sendcommand("ATH",ser)
+                time.sleep(20)
+                sendcommand("ATH")
                 return "OK"
     return "NO REACH"
 
-def call(number,ser):
-    thread = Thread(target=call_aux, args=('+351910649345', ser))
+def call(number):
+    thread = Thread(target=call_aux, args=(number, ser))
     thread.start()
     #thread.join()
 
-def turn_off_serial(ser):
+def turn_off_serial():
     ser.close()
 
 #"/dev/ttyUSB0"

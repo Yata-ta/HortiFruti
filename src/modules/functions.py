@@ -19,6 +19,7 @@ import adafruit_bme680
 import adafruit_ens160
 import smbus
 from .database import *
+from .A9comm import *
 
 from .classes import *
 from serial.tools import list_ports
@@ -157,7 +158,10 @@ def initialize_system():
             try:
                 if os.path.exists("../rep/log.txt"):
                     os.remove("../rep/log.txt")
-                    return 1
+
+                # start A9 comm
+                initA9()
+                return 1
             except:
                 print_r("ERROR-[9] : Unable to delete old log file")
         else:
@@ -347,6 +351,7 @@ def termination_handler():
     GPIO.setup(25, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
     time.sleep(0.5)
     print(cl.Fore.LIGHTRED_EX +".", end="")
+    turn_off_serial()
     time.sleep(0.5)
     print(cl.Fore.LIGHTRED_EX +".", end="")
     time.sleep(0.5)
