@@ -5,20 +5,25 @@
 ## ** Created by Gabriel Pizzighini and ... ** ## 
 
 import os
+import subprocess
 import colorama as cl
 import platform
 import logging
 import threading
 import atexit
 import time
+import serial
 import RPi.GPIO as GPIO
 import board
 import adafruit_bme680
 import adafruit_ens160
 import smbus
-from .classes import *
+from .database import *
 
+from .classes import *
+from serial.tools import list_ports
 from time import sleep
+subprocess.run(["sudo", "pigpiod"])
 from gpiozero.pins.pigpio import PiGPIOFactory
 from gpiozero import Servo
 
@@ -148,13 +153,21 @@ def initialize_system():
             ## Set relays pins mode to default 
             relay_module = Relay(1)
             relay_module.deafult_state()
-            return 1
+
+            try:
+                if os.path.exists("../rep/log.txt"):
+                    os.remove("../rep/log.txt")
+                    return 1
+            except:
+                print_r("ERROR-[9] : Unable to delete old log file")
         else:
             print_r("ERROR-[2] : Didn't found an ARM chip 'BCM***' module, please execute me in Raspberry Pi or similar...")
             print(cl.Back.RED + f"You are on a {platform.system()} system")
             return 2
     except:
             print_r("ERROR-[3] : Unable to obtain the base model of the device")
+    
+
 
 # Start the execution of the simulation file [main.py]  
 def initialize_simulator():
@@ -409,3 +422,8 @@ def initial_components_test():
     print("***DONE!***")
     print()
 
+def log_data(data):
+    log = open("../rep/log.txt",'a')
+    time_date = strftime("%H:%M:%S", gmtime())
+    log.write(f"{time_date}; {data[0]}; {data[1]};\n")
+    log.close()
