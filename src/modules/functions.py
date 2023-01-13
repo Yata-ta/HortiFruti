@@ -244,10 +244,15 @@ def get_OxygenValues() -> float:
     except ValueError:
         value = previous
 
-    if (value >= 23 or value <= 15) and (previous <= 23 or previous >= 15) and (value != 0):
-        value = previous
-    elif value != 0:
-        value = 3.9*19/3.80
+    if (value >= 23 or value <= 15):
+        
+        if (previous <= 23 or previous >= 15)
+            value = previous
+        else:
+            value = 3.9*19/3.80
+
+    elif (value <= 23 and value >= 15):
+        value = value
     else:
         value = 0.0
         
