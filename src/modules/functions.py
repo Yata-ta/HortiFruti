@@ -206,37 +206,46 @@ def initialize_real_sensors():
 #global previous
 previous = 3.9*19/3.80
 def get_OxygenValues() -> float:
-    
     global previous
     BAUD_RATE = 9600
     TIMEOUT = 5
     PORT = "/dev/ttyACM0"
     #PORT = "/dev/ttyAMA0"
-        
+    SEPERATOR = "|"
+    
     value = 0.0
         
     myports = [tuple(p) for p in list(serial.tools.list_ports.comports())]
     #print(myports)
     ser = serial.Serial(PORT, BAUD_RATE, timeout = TIMEOUT) # Open the serial port
+    
 
     while True:
         try:
             msg_recebida = ser.readline().strip().decode("utf-8")
+                
+                #ser.flush()
             break
       
         except UnicodeDecodeError:
+                #print(".",end="")
             msg_recebida = ser.readline().strip().decode("utf-8")
+        
+                #ser.flush()
             pass  
         
     try:
         value = float(msg_recebida)*19/3.80
         previous = value
-    
     except ValueError:
         value = previous
 
-    if value > 24 or value < 13:
+    if (value >= 23 or value <= 15) and (previous <= 23 or previous >= 15) and (value != 0):
+        value = previous
+    else if value != 0:
         value = 3.9*19/3.80
+    else:
+        value = 0.0
         
     return value
 
