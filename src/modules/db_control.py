@@ -36,7 +36,22 @@ def get_o2_info(sensores):
         if(sens_indiv.name == "O2"):
             return sens_indiv.value, sens_indiv.max, sens_indiv.min
 
+def get_co2_info(sensores):
+    #print("get_temp_info")
+    for sens_indiv in sensores:
+        if(sens_indiv.name == "CO2"):
+            return sens_indiv.value, sens_indiv.max, sens_indiv.min
 
+def get_hum_info(sensores):
+    #print("get_temp_info")
+    for sens_indiv in sensores:
+        if(sens_indiv.name == "humidade"):
+            return sens_indiv.value, sens_indiv.max, sens_indiv.min
 
+def get_pressao_info(sensores):
+    #print("get_temp_info")
+    for sens_indiv in sensores:
+        if(sens_indiv.name == "pressao"):
+            return sens_indiv.value, sens_indiv.max, sens_indiv.min
 
  

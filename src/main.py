@@ -39,6 +39,9 @@ if __name__ == '__main__':
     sensor = modules.db_control.define_sensors(1)
     _,temp_max,temp_min = modules.db_control.get_temperatura_info(sensor)
     _,o2_max,o2_min = modules.db_control.get_o2_info(sensor)
+    _,co2_max,co2_min = modules.db_control.get_co2_info(sensor)
+    _,hum_max,hum_min = modules.db_control.get_hum_info(sensor)
+    _,pressao_max,pressao_min = modules.db_control.get_pressao_info(sensor)
 
     A9comm.call(call_number)
     
@@ -60,8 +63,11 @@ if __name__ == '__main__':
             #print(f"Humidity: {sensor_values[2]}")
             print("-------")
             print()
-            print(f"{temp_min} < {sensor_values[0]:.2f} < {temp_max}")
-            print(f"{o2_min} < {modules.functions.get_OxygenValues():.2f} < {o2_max}")
+            print(f"TEMP: {temp_min} < {sensor_values[0]:.2f} < {temp_max}")
+            print(f"O2: {o2_min} < {modules.functions.get_OxygenValues():.2f} < {o2_max}")
+            print(f"CO2: {co2_min} < {sensor_values[4]:.2f} < {co2_max}")
+            print(f"HUM: {hum_min} < {sensor_values[2]:.2f} < {hum_max}")
+            print(f"PRESSAO: {pressao_min} < {sensor_values[3]:.2f} < {pressao_max}")
             print()
             print("-------")
 
@@ -85,7 +91,12 @@ if __name__ == '__main__':
 
              # SAFETY DEBUG MODE, TO NOT FLOOD THE DATABASE
             if check_params == 1:
-                modules.db_control.set_value_sensor(1,time_date,sensor_values[0])
+                modules.db_control.set_value_sensor(5,time_date,sensor_values[0])
+                modules.db_control.set_value_sensor(6,time_date,sensor_values[2])
+                modules.db_control.set_value_sensor(7,time_date,sensor_values[4])
+                modules.db_control.set_value_sensor(8,time_date,modules.functions.get_OxygenValues())
+                modules.db_control.set_value_sensor(9,time_date,sensor_values[3])
+
 
     elif rtn == 2:
         while True:
