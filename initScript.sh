@@ -1,5 +1,10 @@
+/******************************************************\
+        Application Initialization Bash Script                     
+\******************************************************/
+
 
 echo Initilization Bash Script!
+
 
 
 #Dependencies Install and Upgrade
@@ -11,6 +16,8 @@ yes | sudo apt-get install --upgrade python3.10
 
 yes | sudo apt-get install --upgrade python3-pip
 
+#sudo pip install --upgrade pip
+yes | sudo pip install --upgrade setuptools
 
 
 #Get Username by Input
@@ -21,8 +28,10 @@ read USERNAME
 
 
 
+
 #Git Pull
 #####################################################
+
 if [ -d "/home/$USERNAME/HortiFruiti" ]; then
     ### Take action if DIR exists ###
 
@@ -43,13 +52,7 @@ else
 fi
 
 
-#sudo pip install --upgrade pip
-yes | sudo pip install --upgrade setuptools
-
-
-
-
-#stdlib Libraries
+#Stdlib Libraries
 #####################################################
 #sudo pip install os
 #sudo pip install random
