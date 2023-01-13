@@ -4,6 +4,7 @@ import sys
 import os
 
 
+
 import modules.db_control
 import modules.database 
 import modules.functions
@@ -23,6 +24,7 @@ timer = []
 
 if __name__ == '__main__':
 
+
     check_params = modules.functions.start(sys.argv)
 
     if check_params == 2 or check_params== None:
@@ -30,10 +32,11 @@ if __name__ == '__main__':
     
     rtn = modules.functions.initialize_system()
 
-    modules.functions.initial_components_test()
+    # modules.functions.initial_components_test()
 
     sensor = modules.db_control.define_sensors(1)
     _,temp_max,temp_min = modules.db_control.get_temperatura_info(sensor)
+    _,o2_max,o2_min = modules.db_control.get_o2_info(sensor)
     
 
     if rtn == 1:
@@ -51,7 +54,15 @@ if __name__ == '__main__':
 
             #print(f"CO2: {sensor_values[4]}")
             #print(f"Humidity: {sensor_values[2]}")
+            print("-------")
+            print()
             print(f"{temp_min} < {sensor_values[0]:.2f} < {temp_max}")
+            print(f"{o2_min} < {modules.functions.get_OxygenValues():.2f} < {o2_max}")
+            print()
+            print("-------")
+
+            data = [f"{sensor_values[0]:.2f}",f"{modules.functions.get_OxygenValues():.2f}"]
+            modules.functions.log_data(data)
 
             #TODO create atuator logic function in functions...
 

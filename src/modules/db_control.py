@@ -30,6 +30,12 @@ def get_temperatura_info(sensores):
         if(sens_indiv.name == "temperatura"):
             return sens_indiv.value, sens_indiv.max, sens_indiv.min
 
+def get_o2_info(sensores):
+    #print("get_temp_info")
+    for sens_indiv in sensores:
+        if(sens_indiv.name == "O2"):
+            return sens_indiv.value, sens_indiv.max, sens_indiv.min
+
 
 
 
