@@ -145,8 +145,10 @@ class Timer:
         print(time.time() - self.time)
 
 class Relay:
+
     def __init__(self, room):
         # ATTENTION GPIO NUMBER ARE IN BCM MODE !!
+        self.relays_states = [0,0,0,0]
         self.room = room
         self.relay_1 = 6 ## green
         self.relay_2 = 13 ## blue
@@ -158,7 +160,10 @@ class Relay:
 
     def get_room(self):
         return self.room
-    
+
+    def get_states(self):
+        return self.relays_states
+
     def deafult_state(self):
         GPIO.setup(self.relay_1, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         GPIO.setup(self.relay_2, GPIO.IN, pull_up_down=GPIO.PUD_UP)
@@ -168,34 +173,42 @@ class Relay:
     def turn_on_relay_1(self): # then turn on
         GPIO.setup(self.relay_1, GPIO.OUT)
         GPIO.output(self.relay_1, False)
+        self.relays_states[0] = 1
 
     def turn_off_relay_1(self): # and turn off
         GPIO.setup(self.relay_1, GPIO.OUT)
         GPIO.output(self.relay_1, True)
+        self.relays_states[0] = 0
 
     def turn_on_relay_2(self): # then turn on
         GPIO.setup(self.relay_2, GPIO.OUT)
         GPIO.output(self.relay_2, False)
+        self.relays_states[1] = 1
 
     def turn_off_relay_2(self): # and turn off
         GPIO.setup(self.relay_2, GPIO.OUT)
         GPIO.output(self.relay_2, True)
+        self.relays_states[1] = 0
     
     def turn_on_relay_3(self): # then turn on
         GPIO.setup(self.relay_3, GPIO.OUT)
         GPIO.output(self.relay_3, False)
+        self.relays_states[2] = 1
 
     def turn_off_relay_3(self): # and turn off
         GPIO.setup(self.relay_3, GPIO.OUT)
         GPIO.output(self.relay_3, True)
+        self.relays_states[2] = 0
     
     def turn_on_relay_4(self): # then turn on
         GPIO.setup(self.relay_4, GPIO.OUT)
         GPIO.output(self.relay_4, False)
+        self.relays_states[3] = 1
 
     def turn_off_relay_4(self): # and turn off
         GPIO.setup(self.relay_4, GPIO.OUT)
         GPIO.output(self.relay_4, True)
+        self.relays_states[3] = 0
 
 
     

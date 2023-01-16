@@ -7,8 +7,11 @@ import serial.tools.list_ports as port_list
 #ports = list(port_list.comports())      #Confirm open ports
 #for p in ports:
 #    print (p)
-
-ser = serial.Serial("/dev/ttyUSB0", baudrate=115200, timeout=5)
+try:
+    ser = serial.Serial("/dev/ttyUSB0", baudrate=115200, timeout=5)
+except:
+    print(f"ERROR-[14] : could not open port..skipping for now...")
+    pass
 
 def sendcommand(command):
     AT_command = command + "\r"

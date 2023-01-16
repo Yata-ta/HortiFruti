@@ -20,6 +20,7 @@ import adafruit_ens160
 import smbus
 from .database import *
 from .A9comm import *
+from .db_control import *
 
 from .classes import *
 from serial.tools import list_ports
@@ -36,12 +37,10 @@ def print_r(str):
     print(cl.Back.RED + str)
     print(cl.Style.RESET_ALL)
 
-
 # prints in yellow [local]
 def print_y(str):
     print(cl.Fore.YELLOW + str)
     print(cl.Style.RESET_ALL)
-
 
 # print for the chamber simulator
 def print_chamber(sensors_names,values,actuators_names,act_values):
@@ -160,7 +159,7 @@ def initialize_system():
                     os.remove("../rep/log.txt")
 
                 # start A9 comm
-                initA9()
+                #initA9()
                 return 1
             except:
                 print_r("ERROR-[9] : Unable to delete old log file")
@@ -171,8 +170,6 @@ def initialize_system():
     except:
             print_r("ERROR-[3] : Unable to obtain the base model of the device")
     
-
-
 # Start the execution of the simulation file [main.py]  
 def initialize_simulator():
     try:
@@ -258,7 +255,6 @@ def get_OxygenValues() -> float:
         
     return value
 
-
 def read_real_sensors(Location: str):
     """
     Read data from the sensors\n
@@ -273,7 +269,7 @@ def read_real_sensors(Location: str):
     """
 
     try:
-        # Calibration of pressure
+        # Calibration of pressure 
         if Location == "PT":
             # change this to match the location's pressure (hPa) at sea level
             bme680.sea_level_pressure = 1008.5
@@ -313,11 +309,16 @@ def start(argv)->int:
         elif argv[1] == 'NORMAL':
             print("Entering" + cl.Fore.LIGHTGREEN_EX + " NORMAL " + cl.Fore.WHITE + "mode")
             return 1
+        
+        elif argv[1] == 'TEST':
+            print("Entering" + cl.Fore.LIGHTGREEN_EX + " TEST " + cl.Fore.WHITE + "mode")
+            return 2
 
         else:
             print("INVALID argument to main.py! please choose one of the following...")
             print("DEBUG - for debug process (this mode will protect the database from flooding)")
             print("NORMAL - for normal program execution")
+            print("TEST - for a connected component test")
             print("EXAMPLE - $ sudo python3 main.py DEBUG")
             return 2
 
@@ -360,36 +361,96 @@ def termination_handler():
     print(cl.Fore.LIGHTRED_EX +"Done")
     print(cl.Style.RESET_ALL)
 
-
 def atuator_logic(room: int, relay_module, real_values: list, limits_values: list):
+    """
+    Controls the room specific relays actuator based on the limits values coming from the database\n 
+    [0] - Temperature in celsius\n
+    [1] - Gas O2\n
+    [2] - Humidity\n
+    [3] - Pressure in hPa\n
+    [4] - eC02 in ppm\n
+    relay_module -> relay object for the specific room\n
+    real_values -> list of sensor values\n
+    limits_values -> list of the limits coming from the database:
+    [temp_max,tem_min,hum_max,hum_min,o2_max,o2_min,Co2_max,CO2_min,press_max,press_min]
+    """
     try:
+        #Temperature control
         if (real_values[0] >= limits_values[0]):
             ## Make the room colder --> turn on frizzer
+            relay_module.turn_on_relay_1()
+                
+        if (real_values[0] <= limits_values[1]):
+            ## Make the room hotter --> turn off frizzer
+            relay_module.turn_off_relay_1()
+    except:
+        print_r(f"ERROR-[10] : Malfunction on relay 1 ")
+    
+    try:
+        #Humidity control
+        if (real_values[2] >= limits_values[2]):
+            ## Make the room steamer --> turn on humidifier
+            relay_module.turn_on_relay_3()
+                
+        if (real_values[2] <= limits_values[3]):
+            ## Make the room dryier --> turn off humidifier
+            relay_module.turn_off_relay_3()
+    except:
+        print_r(f"ERROR-[11] : Malfunction on relay 2")
+    
+    try:
+        #O2 and CO2 control
+        if (real_values[1] >= limits_values[4] or real_values[4] >= limits_values[6] ):
+            ## Make the room oxigenize --> turn on exaustion
             relay_module.turn_on_relay_2()
                 
-        if (real_values[0] <= limits_values[0]):
-            ## temperature too low --> turn off frizzer
+        if (real_values[1] <= limits_values[5] or real_values[4] <= limits_values[7]):
+            ## Make the room isolate --> turn off exaustion
             relay_module.turn_off_relay_2()
     except:
-        pass
+        print_r(f"ERROR-[12] : Malfunction on relay 3")
+    
+    try:
+        # CAUTION --> We cannot open the valves when the door is open!
+        #Pessure control
+        if (real_values[3] >= limits_values[8]):
+            ## Remove gases --> open door
+            actuate_servo()
+                
+        if (real_values[3] <= limits_values[9]):
+            if (actuate_servo() == True):
+                # check if the door is open and
+                actuate_servo() # --> closes and
+            ## Insert Gases --> turn on cilinder valves
+            relay_module.turn_on_relay_4()
+    except:
+        print_r(f"ERROR-[13] : Malfunction on relay 3 or 4")
 
 def actuate_servo():
+    '''
+    Opens and closes the servo based on its previous position\n
+    @returns\n
+    True if its now open\n
+    False if its now closed\n 
+    '''
     print(cl.Style.RESET_ALL)
     try:
         print(f"servo value: {servo.value}")
         if servo.value == -0.0: # servo on closed position
             servo.max() # open servo
             print(f"servo value max: {servo.value}")
+            return True # True --> for open position 
 
         elif servo.value == 1.0: # servo is open 
             servo.mid() # close servo
             print(f"servo value mid: {servo.value}")
+            return False # False --> for close position 
         
         else:
-            print(cl.Back.RED + "[ERROR - 7] - Invalid servo position")
+            print(cl.Back.RED + "ERROR-[7] : Invalid servo position")
 
     except:
-        print(cl.Back.RED + "[ERROR - 6] - Error turning futaba servo")
+        print(cl.Back.RED + "ERROR-[6] : Error turning futaba servo")
         print(cl.Style.RESET_ALL)
 
 def initial_components_test():
@@ -441,8 +502,43 @@ def initial_components_test():
     print("***DONE!***")
     print()
 
-def log_data(data):
+def log_data(sensor_data,actuator_data):
+    '''
+    function to create logs after the offline signal\n
+    @inputs\n
+    sensor_data => [real-temp-value,real-hum-value,real-O2-value,real-CO2-value,real-Press-value]\n
+    actuator_data => [K1,K3,K5,K7] -> k is equal to the relay on the relay module ex:[1,2,3,4]
+    '''
     log = open("../rep/log.txt",'a')
     time_date = strftime("%H:%M:%S", gmtime())
-    log.write(f"{time_date}; {data[0]}; {data[1]};\n")
+    log.write(f"{time_date}; {sensor_data[0]}; {sensor_data[1]}; {sensor_data[2]}; {sensor_data[3]}; {sensor_data[4]}; {actuator_data[0]}; {actuator_data[1]}; {actuator_data[2]}; {actuator_data[3]}\n")
     log.close()
+
+def check_internet(hostname,last_value):
+    """
+    checks for internet connection by reaching the DNS 1.1.1.1 on the server
+    """
+    global Connection_SIGNAL
+    try:
+        # see if we can resolve the host name -- tells us if there is
+        # a DNS listening
+        host = socket.gethostbyname(hostname)
+        # connect to the host -- tells us if the host is actually reachable
+        s = socket.create_connection((host, 80), 2)
+        s.close()
+        if last_value == "OFFLINE":
+            ## switch from offline to online now we send the log to the database
+            print("Starting process_and_send function on a thread")
+            # OFFLINE to ONLINE --> there is a new log
+            # we are back online! lets create and send the logged information back to the db in a thread
+            thread = Thread(target=process_and_send)
+            thread.start()
+            Connection_SIGNAL = "ONLINE"
+        return True, Connection_SIGNAL
+    except Exception:
+        print("[" + cl.Fore.RED + "ERROR" + cl.Fore.WHITE + "]" + "- Lost internet connection")
+        if last_value == "ONLINE":
+            #lost connection to the database now we must log data
+            Connection_SIGNAL = "OFFLINE"
+        pass # we ignore any errors, returning False
+        return False, Connection_SIGNAL

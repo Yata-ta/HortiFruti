@@ -1,5 +1,7 @@
 from .database import * 
 from .classes import * 
+from .functions import *
+from threading import Thread
 
 def define_sensors(contentorId: int) -> list:
 
@@ -54,4 +56,15 @@ def get_pressao_info(sensores):
         if(sens_indiv.name == "pressao"):
             return sens_indiv.value, sens_indiv.max, sens_indiv.min
 
- 
+def process_and_send():
+    '''
+    functions needed to procees and send to the database the logged information
+    '''
+    # 1 - check if there is a log.txt to send
+    # 2 - process and send the information to the database
+    #   log.tx data -> [time;temp;hum;o2;co2;press;k1;k3;k5;k7]
+    #   k1 -> frizzer
+    #   k3 -> exaustor
+    #   k5 -> humidifier
+    #   k7 -> cylinder    
+
