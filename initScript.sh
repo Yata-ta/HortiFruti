@@ -34,22 +34,29 @@ read USERNAME
 # Git Pull
 #####################################################
 
-if [ -d "/home/$USERNAME/HortiFruiti" ]; then
-    ### Take action if DIR exists ###
 
-else
+if [ ! -d "/home/pedro/local/ZE/final2" ]; then
     ###  $DIR does NOT exists ### 
-    mkdir /home/$USERNAME/HortiFruiti
+    #mkdir /home/$USERNAME/HortiFruiti
+    mkdir /home/pedro/local/ZE/final2
+    
 fi
 
+#/home/pedro/local/ZE/test
+#/home/$USERNAME/HortiFruiti
 
-if [ ! -d /home/$USERNAME/HortiFruiti/.git ] then
+if [ ! -d "/home/pedro/local/ZE/final2/.git" ]; then
+    
+    sudo git clone https://github.com/Yata-ta/HortiFruti.git /home/pedro/local/ZE/final2
     #sudo git clone git@github.com:Yata-ta/HortiFruti.git /home/jose/bashScript_test
-    sudo git clone https://github.com/Yata-ta/HortiFruti /home/$USERNAME/HortiFruiti
-    cd /home/$USERNAME/HortiFruiti
+    #sudo git clone https://github.com/Embedded-System-yatata/LOL.git /home/pedro/local/ZE/final2
+    
+    cd /home/pedro/local/ZE/final2
 else
-    cd /home/$USERNAME/HortiFruiti
-    sudo git pull https://github.com/Yata-ta/HortiFruti
+    #cd /home/pedro/local/ZE/test
+    cd /home/pedro/local/ZE/final2
+    sudo git pull https://github.com/Yata-ta/HortiFruti.git
+    #sudo git pull https://github.com/Embedded-System-yatata/LOL.git
 
 fi
 
@@ -77,11 +84,12 @@ sudo pip install --upgrade pandas
 
 # Run dependencies
 #####################################################
+sudo killall pigpiod
 sudo pigpiod
 
 
 # Run main.py
 #####################################################
-cd /home/$USERNAME/HortiFruiti/src/
+cd /home/pedro/local/ZE/final2/src
 sudo python3 main.py DEBUG
 #sudo python3 main.py NORMAL
