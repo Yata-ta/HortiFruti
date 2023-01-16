@@ -377,9 +377,20 @@ def set_value_atuador( atuadorid,  tempo,valor):
 
 def add_alarm(db, connection, contentorid, tempo, prioridade, texto):
     try:
+        db, connection = connect(DB())
+        
         query = "INSERT INTO up201801019.alarme(data_hora, prioridade, descrição, contentorid) VALUES ('"+ tempo + "',"+ str(prioridade) +" ,'" + texto +"', "+ str(contentorid) + ");"
         print(query)
         result = executequery(db, connection, query)
+        
+        # Close db connection
+        if connection is not None:
+            connection.close()
+        #    print('Database connection closed.')
+
+        if rec == None:
+            print("Não foi encontrado o pedido na DB")
+            return None
 
         return result
 
