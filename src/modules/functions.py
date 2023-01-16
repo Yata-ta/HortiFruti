@@ -246,7 +246,7 @@ def get_OxygenValues() -> float:
 
     if (value >= 23 or value <= 15):
         
-        if (previous <= 23 or previous >= 15)
+        if (previous <= 23 or previous >= 15):
             value = previous
         else:
             value = 3.9*19/3.80

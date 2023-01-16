@@ -10,13 +10,12 @@ import time
 from time import gmtime, strftime
 from dotenv import load_dotenv
 
-
 #           CLASSE COM INFO SOBRE A BASE DADOS
 
 class DB:
 
     def __init__(self):
-        load_dotenv('../db_credentials.env')
+        load_dotenv('/var/local/db_credentials.env')
         self.url = "ec2-54-75-26-218.eu-west-1.compute.amazonaws.com"
         self.database = os.environ['DBNAME']
         self.username = os.environ['USERNAME']
@@ -63,7 +62,7 @@ def identificacao(db, contentorId):
 
 #               IDENTIFICAÇÃO DE CONTENTORES PARA RASPBERRY RESPETIVA
 
-def get_id_contentores( raspberry_id):
+def get_id_contentores(raspberry_id):
     
     db, connection = connect(DB())
 
