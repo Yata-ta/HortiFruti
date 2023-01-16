@@ -208,7 +208,31 @@ def initialize_real_sensors():
         pass
 
 
-
+#global previous
+previous = 3.9*19/3.80
+def UART(ser):
+    global previous
+    while True:
+        try:
+            msg_recebida = ser.readline().strip().decode("utf-8")
+                
+                #ser.flush()
+            break
+      
+        except UnicodeDecodeError:
+                #print(".",end="")
+            msg_recebida = ser.readline().strip().decode("utf-8")
+        
+                #ser.flush()
+            pass  
+        
+    try:
+        value = float(msg_recebida)*19/3.80
+        previous = value
+    except ValueError:
+        value = previous
+    
+    return value
 
 
 def get_OxygenValues() -> float:
@@ -230,9 +254,9 @@ def get_OxygenValues() -> float:
 
     while(value > 0):
 
-        if (value >= 23 and value <= 15):
+        if (value >= 23 or value <= 15):
         
-            if (previous < 23 or previous > 15):
+            if (previous < 23 and previous > 15):
                 value = previous
             else:
                 value = UART(ser)
