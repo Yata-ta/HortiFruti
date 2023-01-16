@@ -318,7 +318,7 @@ def start(argv)->int:
         
         elif argv[1] == 'TEST':
             print("Entering" + cl.Fore.LIGHTGREEN_EX + " TEST " + cl.Fore.WHITE + "mode")
-            return 2
+            return 3
 
         else:
             print("INVALID argument to main.py! please choose one of the following...")
@@ -332,6 +332,7 @@ def start(argv)->int:
             print("MISSING argument to main.py! please choose one of the following...")
             print("DEBUG - for debug process (this mode will protect the database from flooding)")
             print("NORMAL - for normal program execution")
+            print("TEST - for a connected component test")
             print("EXAMPLE - $ sudo python3 main.py DEBUG") 
 
 def alarm(pin, mode = "off"):
@@ -459,7 +460,7 @@ def actuate_servo():
         print(cl.Back.RED + "ERROR-[6] : Error turning futaba servo")
         print(cl.Style.RESET_ALL)
 
-def initial_components_test():
+def initial_components_test(call_number):
     '''
     EXECUTE OUT OF THE MAIN LOOP
     This function tests the actuation of the circut components
@@ -507,6 +508,21 @@ def initial_components_test():
     alarm(alarm_pin,"off")
     print("***DONE!***")
     print()
+
+    print("*** START A9 COMMUNICATION ? ***")
+    res = input("(yes/no): ")
+    if res.lower() == 'yes':
+        print(f"*** STARTING CALL ON NUMBER: {call_number} ***")
+        call(call_number)
+        print("***DONE!***")
+        print(f"*** SEND SMS to number: {call_number}")
+        print("....IN WORK....")
+        print("***DONE!***")
+    else:
+        exit()
+
+
+
 
 def log_data(sensor_data,actuator_data):
     '''

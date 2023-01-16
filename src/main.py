@@ -41,9 +41,8 @@ if __name__ == '__main__':
     #using 1 for now..
     raspberry_id = 1
 
-    if check_params == 2:
-        modules.functions.initial_components_test()
-        A9comm.call(call_number)
+    if check_params == 3:
+        modules.functions.initial_components_test(call_number)
 
     if rtn == 1:
         #Code functions for local execution and execute them here.
