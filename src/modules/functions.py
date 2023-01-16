@@ -207,23 +207,11 @@ def initialize_real_sensors():
         print("[" + cl.Fore.RED + "NOT FOUND" + cl.Fore.WHITE + "]" + "- ENS160 not found")  
         pass
 
+
 #global previous
 previous = 3.9*19/3.80
-def get_OxygenValues() -> float:
+def UART(ser):
     global previous
-    BAUD_RATE = 9600
-    TIMEOUT = 5
-    PORT = "/dev/ttyACM0"
-    #PORT = "/dev/ttyAMA0"
-    SEPERATOR = "|"
-    
-    value = 0.0
-        
-    myports = [tuple(p) for p in list(serial.tools.list_ports.comports())]
-    #print(myports)
-    ser = serial.Serial(PORT, BAUD_RATE, timeout = TIMEOUT) # Open the serial port
-    
-
     while True:
         try:
             msg_recebida = ser.readline().strip().decode("utf-8")
@@ -243,21 +231,41 @@ def get_OxygenValues() -> float:
         previous = value
     except ValueError:
         value = previous
-
-    if (value >= 23 or value <= 15):
-        
-        if (previous <= 23 or previous >= 15):
-            value = previous
-        else:
-            value = 3.9*19/3.80
-
-    elif (value <= 23 and value >= 15):
-        value = value
-    else:
-        value = 0.0
-        
+    
     return value
 
+
+def get_OxygenValues() -> float:
+    global previous
+    BAUD_RATE = 9600
+    TIMEOUT = 5
+    PORT = "/dev/ttyACM0"
+    #PORT = "/dev/ttyAMA0"
+    SEPERATOR = "|"
+    
+    value = 0.0
+        
+    myports = [tuple(p) for p in list(serial.tools.list_ports.comports())]
+    #print(myports)
+    ser = serial.Serial(PORT, BAUD_RATE, timeout = TIMEOUT) # Open the serial port
+    
+    value = UART(ser)
+    
+
+    while(value > 0):
+
+        if (value >= 23 or value <= 15):
+        
+            if (previous < 23 and previous > 15):
+                value = previous
+            else:
+                value = UART(ser)
+        else:  
+            return round (value,2)
+
+    
+
+    return 0.0
 
 def read_real_sensors(Location: str):
     """
