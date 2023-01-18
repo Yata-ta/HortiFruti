@@ -9,7 +9,6 @@ import time
 
 import modules.functions
 import modules.db_control
-import modules.database 
 import modules.classes
 import modules.A9comm as A9comm
 import simulator
@@ -384,7 +383,7 @@ def control_ventoinha(sensores, nivel, atuador,time_day):
     return
 
 def control_porta(sensores, nivel, atuador, contentorid,time_day):
-    ventoinha = modules.database.get_specific_value_atuador(str(contentorid), "Ventoinha",None)
+    ventoinha = modules.db_control.get_specific_value_atuador(str(contentorid), "Ventoinha",None)
     hum, max_, min = get_humidade_info(sensores)
     if(nivel == 0):         # quem manda é a raspberry
       if(timing_actu < time.time() - atuador.time_passed): 
@@ -413,7 +412,7 @@ def verifica_contentor( raspberry_id):
         return id
     else:
          f = open('contentores_id', 'w')
-         ids = modules.database.get_id_contentores(raspberry_id)
+         ids = modules.db_control.get_id_contentores(raspberry_id)
          f.writelines(str(ids))
          f.close()
          
