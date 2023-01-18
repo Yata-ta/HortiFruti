@@ -491,7 +491,7 @@ if __name__ == '__main__':
                 send_db_actuator_buffer()
             
             time_date = time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())
-
+            print("conecao db", db_connected)
             #Atuator logic function for chamber x
             #modules.functions.atuator_logic(raspberry_id,relay_module,sensor_values,limits)
 
