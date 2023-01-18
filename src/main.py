@@ -92,6 +92,8 @@ def define_sensors(contentorId):
     print("conecao db", db_connected)
     if db_connected is True:
         print("antes sensor_db")
+
+        print("AQUI 1")
         # Open db connection
         sensors_db = modules.db_control.get_value_sensores(contentorId)
         print("antes for")
@@ -456,9 +458,9 @@ if __name__ == '__main__':
     raspberry_id = 1
     aux_db = modules.db_control.get_id_contentores(raspberry_id)
     if aux_db is None:
-        modules.db_control.db_connected = False
+        db_connected = False
     else:
-        modules.db_control.db_connected = True
+        db_connected = True
 
     while contentor_ids == None:
         contentor_ids = verifica_contentor(raspberry_id)
