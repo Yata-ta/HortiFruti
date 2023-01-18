@@ -299,7 +299,7 @@ def muda_frigorifico(valor, atuador, time):
 
     else:
         add_actuator_data_buffer(valor, atuador, time)
-
+    atuador.state = valor
     print(atuador.name, "mudou para ", valor)
     return
 
@@ -319,14 +319,15 @@ def muda_ventoinha(valor, atuador, time):
         modules.db_control.set_value_atuador(atuador.id, time, valor)
     else:
         add_actuator_data_buffer(valor, atuador, time)
-
+    atuador.state = valor
     print(atuador.name, "mudou para ", valor)
     return
 
 
 def muda_porta(valor, atuador, time):
     # manda comando pro arduino
-    try:  
+    try:
+        print(valor , atuador.state)
         if(valor == 1 and atuador.state!=1):
             modules.functions.actuate_servo()
         elif (valor == 0 and atuador.state!=0):
@@ -343,6 +344,7 @@ def muda_porta(valor, atuador, time):
         modules.db_control.set_value_atuador(atuador.id, time, valor)
     else:
         add_actuator_data_buffer(valor, atuador, time)
+    atuador.state = valor
     print(atuador.name, "mudou para ", valor)
     return
 
