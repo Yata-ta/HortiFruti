@@ -20,7 +20,7 @@ import time
 
 def get_sensors(sensors):  #do arduino
 
-    temp, gas, humidade, pressao, co2 = modules.functions.read_real_sensors()  
+    temp, gas, humidade, pressao, co2 = modules.functions.read_real_sensors(COUNTRY)  
     for sensor in sensors:
         if(sensor.name =="temperatura"):
             sensor.value = temp
