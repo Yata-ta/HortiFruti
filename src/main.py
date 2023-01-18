@@ -16,7 +16,7 @@ import simulator
 import pandas as pd
 import time
 
-global db_connected
+
 
 def get_sensors(sensors):  #do arduino
 
@@ -427,7 +427,8 @@ def verifica_contentor( raspberry_id):
 
 alarm_pin = 25 ## red
 
-COUNTRY = "PT"
+global COUNTRY
+global db_connected
 
 contentor_ids = None
 sensor = []
@@ -438,6 +439,7 @@ timer = []
 time_begin_sens = [0,0]
 timing_sens = 10
 timing_actu = 10
+COUNTRY = "PT"
 
 call_number = "+351910649345"
 
