@@ -87,6 +87,7 @@ def define_sensors(contentorId):
     sensors = []
     data_df = []
     print("ebntrou define sensers")
+    print("conecao db", db_connected)
     if db_connected is True:
         print("antes sensor_db")
         # Open db connection
@@ -112,8 +113,9 @@ def define_sensors(contentorId):
         return sensors
 
     else:
+        print(" NO conecao db", db_connected)
         df_sensors = pd.read_csv('sensors.csv')
-
+        print("teste after df_sens")
         for i in range(df_sensors.shape[0]):
             sensor_aux = modules.classes.Sensor(-1, contentorId, 'ini', 0, 0)
 
