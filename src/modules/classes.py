@@ -100,11 +100,13 @@ class Sensor:
 class Actuator:
     def __init__(self,id,room,name,min,max):
         self.id = id
-        self.name = name
         self.room = room
-        self.state = False
+        self.name = name
+        self.state = 0
+        self.dashboard = 0
         self.min = min
         self.max = max
+        self.time_passed = 0
 
     def get_name(self):
         return self.name
