@@ -28,7 +28,7 @@ def get_sensors(sensors):  #do arduino
             sensor.value = co2
             print('The new value from sensor ', sensor.name,' is ', sensor.value)
         elif (sensor.name =="02"):
-            sensor.value = gas
+            sensor.value = modules.functions.get_OxygenValues()
             print('The new value from sensor ', sensor.name,' is ', sensor.value)
         elif (sensor.name =="humidade"):
             sensor.value = humidade
@@ -419,6 +419,10 @@ def verifica_contentor( raspberry_id):
          return ids
 
 
+def process_and_send():
+        send_db_sensor_buffer()
+        send_db_actuator_buffer()
+
 alarm_pin = 25 ## red
 
 global COUNTRY
@@ -458,8 +462,6 @@ if __name__ == '__main__':
     else:
         db_connected = True
 
-    while contentor_ids == None:
-        contentor_ids = verifica_contentor(raspberry_id)
 
     if check_params == 3:
         modules.functions.initial_components_test(call_number)
@@ -467,15 +469,20 @@ if __name__ == '__main__':
     if rtn == 1:
         #Code functions for local execution and execute them here.
 
+
+        
         print(f"Starting local execution...on room {raspberry_id}")
         modules.functions.initialize_real_sensors()
         relay_module = modules.classes.Relay(raspberry_id) # relay module of room 1
         print("Getting database information...")
+        
+        while contentor_ids == None:
+            contentor_ids = verifica_contentor(raspberry_id)
         try:
             for i in range(len(contentor_ids)):
                 sensor.append (define_sensors(contentor_ids[i]))
                 atuadores.append (define_actuators(contentor_ids[i]))
-
+            print("[" + cl.Fore.GREEN + "OK" + cl.Fore.WHITE + "]" + "- Connected to the database")
             old_signal = "ONLINE"
         except:
             print("[" + cl.Fore.RED + "ERROR" + cl.Fore.WHITE + "]" + "- Unable to connected to the database")
@@ -483,13 +490,14 @@ if __name__ == '__main__':
 
         while True:
 
-            aux_db = modules.db_control.get_id_contentores(raspberry_id)
-            if aux_db is None:
+            is_there_internet,new_signal = modules.functions.check_internet(host,old_signal)
+            old_signal = new_signal
+            
+            if is_there_internet is None:
                 db_connected = False
             else:
                 db_connected = True
-                send_db_sensor_buffer()
-                send_db_actuator_buffer()
+            
             
             time_date = time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())
             #Atuator logic function for chamber x
@@ -500,7 +508,7 @@ if __name__ == '__main__':
                 timing_sens, timing_actu = modules.db_control.get_timings(contentor_ids[i], timing_sens, timing_actu)
                 time_begin_sens[i], sensor[i] = atualiza_sensores(contentor_ids[i], sensor[i], time_date, time_begin_sens[i])
                 control_atuatores(sensor[i], atuadores[i],contentor_ids[i],time_date)
-            time.sleep(2)
+
 
 
     elif rtn == 2:
