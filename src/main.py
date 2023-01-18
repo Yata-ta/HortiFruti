@@ -286,13 +286,11 @@ def muda_frigorifico(valor, atuador, time):
     
     try:  
         if(valor == 1):
+            print("turn_on_relay_1()")
             relay_module.turn_on_relay_1()
-            relay_module.turn_on_relay_3()
-            relay_module.turn_on_relay_4()
         elif (valor == 0):
+            print("turn_off_relay_1()")
             relay_module.turn_off_relay_1()
-            relay_module.turn_off_relay_3()
-            relay_module.turn_off_relay_4()
     except:
         print(f"ERROR-[10] : Malfunction on relay 1 ")
 
