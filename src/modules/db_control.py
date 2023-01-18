@@ -248,7 +248,7 @@ def get_nivel(atuador_id):
   try:      
     db, connection = connect(DB())
     
-    pedido = "Select dashboard from up201801019.atuador where atuadid=" + str(atuador_id)
+    pedido = "Select nivel from up201801019.atuador where atuadid=" + str(atuador_id)
     executar(db, pedido)
     rec = db.fetchone()
         # Close db connection
