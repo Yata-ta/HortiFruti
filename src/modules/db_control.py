@@ -244,7 +244,7 @@ def get_value_atuadores(contentorId):
     except(Exception, psycopg2.DatabaseError) as error:
         print(error)
 
-def get_nivel_regra(atuador_id):
+def get_nivel(atuador_id):
   try:      
     db, connection = connect(DB())
     
@@ -260,7 +260,7 @@ def get_nivel_regra(atuador_id):
         print("Não foi encontrado o pedido na DB")
         return None
     return rec[0]
-    
+
   except(Exception, psycopg2.DatabaseError) as error:
         print(error)
         
