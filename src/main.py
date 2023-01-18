@@ -498,7 +498,6 @@ if __name__ == '__main__':
             for i in range(len(contentor_ids)):
                 print("\n-------   contentor: ", contentor_ids[i],"   -------")
                 timing_sens, timing_actu = modules.db_control.get_timings(contentor_ids[i], timing_sens, timing_actu)
-                print(timing_sens, timing_actu,  time_date, time_begin_sens[i])
                 time_begin_sens[i], sensor[i] = atualiza_sensores(contentor_ids[i], sensor[i], time_date, time_begin_sens[i])
                 control_atuatores(sensor[i], atuadores[i],contentor_ids[i],time_date)
             time.sleep(2)
