@@ -160,6 +160,7 @@ def initialize_system():
 
                 # start A9 comm
                 #initA9()
+                print_r("entrou")
                 return 1
             except:
                 print_r("ERROR-[9] : Unable to delete old log file")
