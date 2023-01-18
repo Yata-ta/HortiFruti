@@ -88,7 +88,7 @@ def define_sensors(contentorId):
     data_df = []
     print("ebntrou define sensers")
     if db_connected is True:
-
+        print("antes sensor_db")
         # Open db connection
         sensors_db = modules.db_control.get_value_sensores(contentorId)
         print("antes for")
