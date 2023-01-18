@@ -91,7 +91,7 @@ def define_sensors(contentorId):
 
         # Open db connection
         sensors_db = modules.db_control.get_value_sensores(contentorId)
-
+        print("antes for")
         for i in range(len(sensors_db)):
             sensor_aux = modules.classes.Sensor(-1, contentorId, 'ini', 0, 0)
 
@@ -102,6 +102,8 @@ def define_sensors(contentorId):
             sensor_aux.min = sensors_db[i][5]
 
             sensors.append(sensor_aux)
+            print("db_conect", i)
+
             data_df.append([sensor_aux.name, sensor_aux.id, sensor_aux.value, sensor_aux.min, sensor_aux.max])
         print("db_connected is True")
         df_sensors = pd.DataFrame(data_df, columns=['Type','id','Current_Value','Min','Max'])
