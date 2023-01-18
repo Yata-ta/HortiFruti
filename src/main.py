@@ -16,6 +16,8 @@ import simulator
 import pandas as pd
 import time
 
+global db_connected
+
 def get_sensors(sensors):  #do arduino
 
     temp, gas, humidade, pressao, co2 = modules.functions.read_real_sensors()  
@@ -430,7 +432,7 @@ sensor = []
 sensor_values = []
 atuadores = []
 timer = []
-global db_connected
+
 time_begin_sens = [0,0]
 timing_sens = 10
 timing_actu = 10
