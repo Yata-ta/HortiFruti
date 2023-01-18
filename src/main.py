@@ -296,7 +296,7 @@ def muda_frigorifico(valor, atuador, time):
         print(f"ERROR-[10] : Malfunction on relay 1 ")
 
     if db_connected is True:
-        modules.database.set_value_atuador(atuador.id, time, valor)
+        modules.db_control.set_value_atuador(atuador.id, time, valor)
 
     else:
         add_actuator_data_buffer(valor, atuador, time)
@@ -317,7 +317,7 @@ def muda_ventoinha(valor, atuador, time):
 
 
     if db_connected is True:
-        modules.database.set_value_atuador(atuador.id, time, valor)
+        modules.db_control.set_value_atuador(atuador.id, time, valor)
     else:
         add_actuator_data_buffer(valor, atuador, time)
 
@@ -341,7 +341,7 @@ def muda_porta(valor, atuador, time):
 
     
     if db_connected is True:
-        modules.database.set_value_atuador(atuador.id, time, valor)
+        modules.db_control.set_value_atuador(atuador.id, time, valor)
     else:
         add_actuator_data_buffer(valor, atuador, time)
     print(atuador.name, "mudou para ", valor)
