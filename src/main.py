@@ -471,16 +471,11 @@ if __name__ == '__main__':
                 sensor.append (define_sensors(contentor_ids[i]))
                 atuadores.append (define_actuators(contentor_ids[i]))
 
-            old_signal = "ONLINE"
         except:
             print("[" + cl.Fore.RED + "ERROR" + cl.Fore.WHITE + "]" + "- Unable to connected to the database")
             pass
 
         while True:
-
-            # Test internet connection
-            is_there_internet,new_signal = modules.functions.check_internet(host,old_signal)
-            old_signal = new_signal
 
             aux_db = modules.db_control.get_id_contentores(raspberry_id)
             if aux_db is None:
