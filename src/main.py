@@ -306,9 +306,9 @@ def muda_ventoinha(valor, atuador, time):
     # manda comando pro arduino
     try:  
         if(valor == 1):
-            relay_module.turn_on_relay_2()
+            relay_module.turn_on_relay_1()
         elif (valor == 0):
-            relay_module.turn_off_relay_2()
+            relay_module.turn_off_relay_1()
     except:
         print(f"ERROR-[10] : Malfunction on relay 1 ")
 
