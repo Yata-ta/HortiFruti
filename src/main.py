@@ -86,7 +86,7 @@ def send_db_actuator_buffer():
 def define_sensors(contentorId):
     sensors = []
     data_df = []
-
+    print("ebntrou define sensers")
     if db_connected is True:
 
         # Open db connection
