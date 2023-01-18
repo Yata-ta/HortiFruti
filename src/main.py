@@ -164,7 +164,7 @@ def set_sensors(sensors, time_day,temp_sens_passado):
 
 
 def atualiza_sensores(contentorId, sensors, time, temp_sens_passado):
-    print_r("atualiza_sensoroes")
+    print("atualiza_sensoroes")
     try:
         sensors = define_sensors(contentorId)
     except:
