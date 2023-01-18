@@ -469,6 +469,7 @@ if __name__ == '__main__':
         print("Getting database information...")
         try:
             for i in range(len(contentor_ids)):
+                print("for ", i)
                 sensor.append (define_sensors(contentor_ids[i]))
                 atuadores.append (define_actuators(contentor_ids[i]))
 
@@ -495,7 +496,7 @@ if __name__ == '__main__':
             for i in range(len(contentor_ids)):
                 print("\n-------   contentor: ", contentor_ids[i],"   -------")
                 timing_sens, timing_actu = modules.db_control.get_timings(contentor_ids[i], timing_sens, timing_actu)
-                print(timing_sens, timing_actu, time_date, time_begin_sens[i])
+                print(timing_sens, timing_actu, sensor[i].name, time_date, time_begin_sens[i])
                 time_begin_sens[i], sensor[i] = atualiza_sensores(contentor_ids[i], sensor[i], time_date, time_begin_sens[i])
                 control_atuatores(sensor[i], atuadores[i],contentor_ids[i],time_date)
 
