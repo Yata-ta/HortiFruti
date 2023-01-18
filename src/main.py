@@ -103,7 +103,7 @@ def define_sensors(contentorId):
 
             sensors.append(sensor_aux)
             data_df.append([sensor_aux.name, sensor_aux.id, sensor_aux.value, sensor_aux.min, sensor_aux.max])
-
+        print("db_connected is True")
         df_sensors = pd.DataFrame(data_df, columns=['Type','id','Current_Value','Min','Max'])
         df_sensors.to_csv("sensors.csv")
 
