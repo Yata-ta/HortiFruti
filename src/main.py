@@ -88,15 +88,12 @@ def send_db_actuator_buffer():
 def define_sensors(contentorId):
     sensors = []
     data_df = []
-    print("ebntrou define sensers")
-    print("conecao db", db_connected)
+    
     if db_connected is True:
-        print("antes sensor_db")
-
-        print("AQUI 1")
+   
         # Open db connection
         sensors_db = modules.db_control.get_value_sensores(contentorId)
-        print("antes for")
+   
         for i in range(len(sensors_db)):
             sensor_aux = modules.classes.Sensor(-1, contentorId, 'ini', 0, 0)
 
@@ -107,19 +104,18 @@ def define_sensors(contentorId):
             sensor_aux.min = sensors_db[i][5]
 
             sensors.append(sensor_aux)
-            print("db_conect", i)
+      
 
             data_df.append([sensor_aux.name, sensor_aux.id, sensor_aux.value, sensor_aux.min, sensor_aux.max])
-        print("db_connected is True")
+  
         df_sensors = pd.DataFrame(data_df, columns=['Type','id','Current_Value','Min','Max'])
         df_sensors.to_csv("sensors.csv")
 
         return sensors
 
     else:
-        print(" NO conecao db", db_connected)
         df_sensors = pd.read_csv('sensors.csv')
-        print("teste after df_sens")
+
         for i in range(df_sensors.shape[0]):
             sensor_aux = modules.classes.Sensor(-1, contentorId, 'ini', 0, 0)
 
@@ -164,7 +160,6 @@ def set_sensors(sensors, time_day,temp_sens_passado):
 
 
 def atualiza_sensores(contentorId, sensors, time, temp_sens_passado):
-    print("atualiza_sensoroes")
     try:
         sensors = define_sensors(contentorId)
     except:
@@ -479,7 +474,6 @@ if __name__ == '__main__':
         print("Getting database information...")
         try:
             for i in range(len(contentor_ids)):
-                print("for ", i)
                 sensor.append (define_sensors(contentor_ids[i]))
                 atuadores.append (define_actuators(contentor_ids[i]))
 
@@ -499,7 +493,6 @@ if __name__ == '__main__':
                 send_db_actuator_buffer()
             
             time_date = time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())
-            print("conecao db", db_connected)
             #Atuator logic function for chamber x
             #modules.functions.atuator_logic(raspberry_id,relay_module,sensor_values,limits)
 
