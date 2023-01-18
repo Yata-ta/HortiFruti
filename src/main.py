@@ -156,7 +156,7 @@ def set_sensors(sensors, time_day,temp_sens_passado):
 
 
 def atualiza_sensores(contentorId, sensors, time, temp_sens_passado):
-
+    print_r("atualiza_sensoroes")
     try:
         sensors = define_sensors(contentorId)
     except:
@@ -438,6 +438,7 @@ host = "1.1.1.1" # local DNS server
 if __name__ == '__main__':
 
     check_params = modules.functions.start(sys.argv)
+ 
 
     if check_params == 2 or check_params== None:
         sys.exit(0)
@@ -471,11 +472,16 @@ if __name__ == '__main__':
                 sensor.append (define_sensors(contentor_ids[i]))
                 atuadores.append (define_actuators(contentor_ids[i]))
 
+            old_signal = "ONLINE"
         except:
             print("[" + cl.Fore.RED + "ERROR" + cl.Fore.WHITE + "]" + "- Unable to connected to the database")
             pass
 
         while True:
+
+            # Test internet connection
+            is_there_internet,new_signal = modules.functions.check_internet(host,old_signal)
+            old_signal = new_signal
 
             aux_db = modules.db_control.get_id_contentores(raspberry_id)
             if aux_db is None:
