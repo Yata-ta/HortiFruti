@@ -236,6 +236,7 @@ def control_atuatores(sensores, atuadores,contentorid,time): # todos
         if(atuador.name == "Porta"):
                 # nivel = get_nivel_regra(atuador.id)
                 nivel = atuador.dashboard
+                print("Nivel ", nivel)
                 control_porta(sensores,nivel,atuador,contentorid,time)
 
     return
