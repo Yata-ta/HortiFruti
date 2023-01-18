@@ -223,16 +223,16 @@ def control_atuatores(sensores, atuadores,contentorid,time): # todos
     for atuador in atuadores:
         
         if(atuador.name == "Frigorifico"):
-                nivel = modules.db_control.get_nivel(atuador.id)
+                nivel = 0#modules.db_control.get_nivel(atuador.id)
                 control_frigorifico(sensores,nivel,atuador,time)
                 
         if(atuador.name == "Ventoinha"):
-                nivel = modules.db_control.get_nivel(atuador.id)
+                nivel = 0# modules.db_control.get_nivel(atuador.id)
                 control_ventoinha(sensores,nivel,atuador,time)
     for atuador in atuadores:      
              
         if(atuador.name == "Porta"):
-                nivel = modules.db_control.get_nivel(atuador.id)
+                nivel = 0 # modules.db_control.get_nivel(atuador.id)
                 print("Nivel ", nivel)
                 control_porta(sensores,nivel,atuador,contentorid,time)
 
@@ -306,9 +306,9 @@ def muda_ventoinha(valor, atuador, time):
     # manda comando pro arduino
     try:  
         if(valor == 1):
-            relay_module.turn_on_relay_1()
+            relay_module.turn_on_relay_2()
         elif (valor == 0):
-            relay_module.turn_off_relay_1()
+            relay_module.turn_off_relay_2()
     except:
         print(f"ERROR-[10] : Malfunction on relay 1 ")
 
