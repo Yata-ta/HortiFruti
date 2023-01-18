@@ -243,14 +243,14 @@ def get_value_atuadores(contentorId):
         return rec
     except(Exception, psycopg2.DatabaseError) as error:
         print(error)
-'''
-def get_nivel_regra(atuador_id):
-      
+
+def get_nivel(atuador_id):
+  try:      
     db, connection = connect(DB())
     
-    pedido = "Select nivel from up201801019.regra where atuadid=" + str(atuador_id)
+    pedido = "Select nivel from up201801019.atuador where atuadid=" + str(atuador_id)
     executar(db, pedido)
-    rec = db.fetchone()
+    rec = db.fetchall()
         # Close db connection
     if connection is not None:
         connection.close()
@@ -259,9 +259,9 @@ def get_nivel_regra(atuador_id):
     if rec == None:
         print("Não foi encontrado o pedido na DB")
         return None
-    return rec[0]
-
-'''
+    return rec
+  except(Exception, psycopg2.DatabaseError) as error:
+        print(error)
 
 #               OBTER VALOR DE ATUADOR INDIVIDUAL: IDENTIFICACAO POR ID OU TIPO
 
