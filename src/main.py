@@ -509,7 +509,7 @@ if __name__ == '__main__':
                 print(timing_sens, timing_actu,  time_date, time_begin_sens[i])
                 time_begin_sens[i], sensor[i] = atualiza_sensores(contentor_ids[i], sensor[i], time_date, time_begin_sens[i])
                 control_atuatores(sensor[i], atuadores[i],contentor_ids[i],time_date)
-
+            time.sleep(2)
 
 
     elif rtn == 2:
