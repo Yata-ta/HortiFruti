@@ -244,7 +244,7 @@ def get_OxygenValues() -> float:
     PORT = "/dev/ttyACM0"
     #PORT = "/dev/ttyAMA0"
     SEPERATOR = "|"
-    
+    previous = 0
     value = 0.0
         
     myports = [tuple(p) for p in list(serial.tools.list_ports.comports())]
