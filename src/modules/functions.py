@@ -256,7 +256,7 @@ def get_OxygenValues() -> float:
     print(value)
     while(value > 0):
 
-        if (value >= 23 or value <= 15):
+        if (value >= 30 or value <= 12):
         
             if (previous < 23 and previous > 15):
                 value = previous
