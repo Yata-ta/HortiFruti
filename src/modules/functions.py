@@ -581,7 +581,7 @@ def get_sensors(sensors,COUNTRY):  #do arduino
         elif (sensor.name =="CO2"):
             sensor.value = co2
             print('The new value from sensor ', sensor.name,' is ', sensor.value)
-        elif (sensor.name =="02"):
+        elif (sensor.name =="O2"):
             sensor.value = modules.functions.get_OxygenValues()
             print('The new value from sensor ', sensor.name,' is ', sensor.value)
         elif (sensor.name =="humidade"):
