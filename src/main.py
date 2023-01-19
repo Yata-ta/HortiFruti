@@ -26,6 +26,9 @@ timer = []
 
 call_number = "+351910649345"
 
+#O2_VALUE = modules.functions.get_OxygenValues()
+O2_VALUE = 21.000
+
 host = "1.1.1.1" # local DNS server
 
 if __name__ == '__main__':
@@ -57,6 +60,7 @@ if __name__ == '__main__':
             old_signal = "ONLINE"
         except:
             print("[" + cl.Fore.RED + "ERROR" + cl.Fore.WHITE + "]" + "- Unable to connected to the database")
+            alarm(alarm_pin,"on")
             pass
         try:
             _,temp_max,temp_min = modules.db_control.get_temperatura_info(sensor)
@@ -80,13 +84,15 @@ if __name__ == '__main__':
             time_date = modules.database.strftime("%Y-%m-%d %H:%M:%S", modules.database.gmtime())
             # read sensor values
             sensor_values = modules.functions.read_real_sensors(COUNTRY)
+            #co2_value = modules.functions.simulate_co2_sensor()
 
 
             print("-------")
             print()
             print(f"TEMP: {temp_min} < {sensor_values[0]:.2f} < {temp_max}")
-            print(f"O2: {o2_min} < {modules.functions.get_OxygenValues():.2f} < {o2_max}")
-            print(f"CO2: {co2_min} < {sensor_values[4]:.2f} < {co2_max}")
+            #print(f"O2: {o2_min} < {modules.functions.get_OxygenValues():.2f} < {o2_max}")
+            print(f"O2: {o2_min} < {O2_VALUE:.2f} < {o2_max}")
+            print(f"CO2: {co2_min} < {sensor_values[4]} < {co2_max}")
             print(f"HUM: {hum_min} < {sensor_values[2]:.2f} < {hum_max}")
             print(f"PRESSAO: {pressao_min} < {sensor_values[3]:.2f} < {pressao_max}")
             print(f"internet status: {is_there_internet}")
@@ -96,9 +102,9 @@ if __name__ == '__main__':
             #Atuator logic function for chamber x
             modules.functions.atuator_logic(raspberry_id,relay_module,sensor_values,limits)
 
-            if (is_there_internet): # there is no internet log the data and signal OFFLINE
+            if not(is_there_internet): # there is no internet log the data and signal OFFLINE
                 #[time;temp;hum;o2;co2;press;k1;k3;k5;k7]
-                sensor_data = [f"{sensor_values[0]:.2f}",f"{sensor_values[2]:.2f}",f"{modules.functions.get_OxygenValues():.2f}",f"{sensor_values[4]:.2f}",f"{sensor_values[3]:.2f}"]
+                sensor_data = [f"{sensor_values[0]:.2f}",f"{sensor_values[2]:.2f}",f"{O2_VALUE:.2f}",f"{sensor_values[4]:.2f}",f"{sensor_values[3]:.2f}"]
                 actuator_data = relay_module.get_states()
                 modules.functions.log_data(sensor_data,actuator_data)
                 pass
@@ -108,7 +114,7 @@ if __name__ == '__main__':
                 modules.db_control.set_value_sensor(5,time_date,sensor_values[0])
                 modules.db_control.set_value_sensor(6,time_date,sensor_values[2])
                 modules.db_control.set_value_sensor(7,time_date,sensor_values[4])
-                modules.db_control.set_value_sensor(8,time_date,modules.functions.get_OxygenValues())
+                modules.db_control.set_value_sensor(8,time_date,O2_VALUE)
                 modules.db_control.set_value_sensor(9,time_date,sensor_values[3])
 
 

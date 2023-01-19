@@ -74,11 +74,11 @@ class Sensor:
         self.max = self.value
 
     def increase_value(self):
-        self.value = self.value + 0.8
+        self.value = self.value + 80
         return self.value
 
     def decrease_value(self):
-        self.value = self.value - 0.8
+        self.value = self.value - 80
         return self.value
     
     def act_increase_value(self):
