@@ -253,7 +253,7 @@ def get_OxygenValues() -> float:
     
     value = UART(ser)
     
-    print(value)
+    print(value, previous)
     while(value > 0):
 
         if (value >= 30 or value <= 12):
