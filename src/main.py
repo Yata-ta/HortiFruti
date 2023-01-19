@@ -86,7 +86,7 @@ if __name__ == '__main__':
             i=0
             while True:
                 i = i+1
-                aux_db = modules.db_control.get_id_contentores(raspberry_id)
+                #aux_db = modules.db_control.get_id_contentores(raspberry_id)
                 print("print", i,aux_db)
             else:
                 db_connected = True
