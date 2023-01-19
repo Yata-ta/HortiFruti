@@ -253,7 +253,7 @@ def get_OxygenValues() -> float:
     
     value = UART(ser)
     
-
+    print(value)
     while(value > 0):
 
         if (value >= 23 or value <= 15):
@@ -582,7 +582,7 @@ def get_sensors(sensors,COUNTRY):  #do arduino
             sensor.value = co2
             print('The new value from sensor ', sensor.name,' is ', sensor.value)
         elif (sensor.name =="O2"):
-            sensor.value = modules.functions.get_OxygenValues()
+            sensor.value = get_OxygenValues()
             print('The new value from sensor ', sensor.name,' is ', sensor.value)
         elif (sensor.name =="humidade"):
             sensor.value = humidade
