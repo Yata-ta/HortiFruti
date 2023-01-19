@@ -202,6 +202,10 @@ def define_actuators(contentorId):
 
 def control_atuatores(sensores, atuadores,contentorid,time): # todos
 
+    try:
+        atuadores = define_actuators(contentorid)
+    except:
+        print('Could not connect with the db')
 
     for atuador in atuadores:
         

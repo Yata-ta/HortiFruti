@@ -398,36 +398,36 @@ def add_alarm(contentorid, tempo, prioridade, texto):
         print(error)
 #               ZONA DE TESTE/DEBUG
 
-contentorId = '1'
-while (1):
-    time_date = strftime("%Y-%m-%d %H:%M:%S", gmtime())
-    # db_con, connection = connect(DB())
-    # fruta, utilizadorid = identificacao(db_con, contentorId)
-    # print(fruta, utilizadorid)
-    #
-    # tipo1, valor1 = get_value_sensores(db_con, contentorId)
-    #
-    # print(tipo1, valor1)
-    #
-    # valor = get_specific_value_sensor(db_con, contentorId, 'temperatura', None)
-    # print(valor)
-    #
-    # tipo, valor = get_value_atuadores(db_con, contentorId)
-    # print(tipo, valor)
-    #
-    # valor = get_specific_value_atuador(db_con, contentorId, 'Exaustor', None)
-    # print(valor)
-    #
-    # send_values_sensores(db_con, connection, contentorId, tipo1, valor1)
-    # set_value_sensor(db_con, connection, 6, str(time_date), 90)
-    # set_value_atuador(db_con, connection, 6, str(time_date), 0)
-
-    add_alarm(1, str(time_date), 5, "ALARME CAOS")
-
-    # if connection is not None:
-    #     connection.close()
-    #     print('Database connection closed.')
-
-    time.sleep(1)
+# contentorId = '1'
+# while (1):
+#     time_date = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+#     # db_con, connection = connect(DB())
+#     # fruta, utilizadorid = identificacao(db_con, contentorId)
+#     # print(fruta, utilizadorid)
+#     #
+#     # tipo1, valor1 = get_value_sensores(db_con, contentorId)
+#     #
+#     # print(tipo1, valor1)
+#     #
+#     # valor = get_specific_value_sensor(db_con, contentorId, 'temperatura', None)
+#     # print(valor)
+#     #
+#     # tipo, valor = get_value_atuadores(db_con, contentorId)
+#     # print(tipo, valor)
+#     #
+#     # valor = get_specific_value_atuador(db_con, contentorId, 'Exaustor', None)
+#     # print(valor)
+#     #
+#     # send_values_sensores(db_con, connection, contentorId, tipo1, valor1)
+#     # set_value_sensor(db_con, connection, 6, str(time_date), 90)
+#     # set_value_atuador(db_con, connection, 6, str(time_date), 0)
+#
+#     add_alarm(1, str(time_date), 5, "ALARME CAOS")
+#
+#     # if connection is not None:
+#     #     connection.close()
+#     #     print('Database connection closed.')
+#
+#     time.sleep(1)
 
 
