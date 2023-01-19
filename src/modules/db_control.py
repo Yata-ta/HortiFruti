@@ -77,10 +77,11 @@ def identificacao(db, contentorId):
 def get_id_contentores( raspberry_id):
 
     try:
-
+        print(0)
         db, connection = connect(DB())
-
+        print(1)
         pedido = 'Select contentorid from up201801019.contentor where raspberryid=' + str(raspberry_id)
+        print(2)
         executar(db, pedido)
         rec = db.fetchone()
         # Close db connection
