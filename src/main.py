@@ -80,14 +80,16 @@ if __name__ == '__main__':
             pass
 
         while True:
-            is_there_internet,new_signal = modules.functions.check_internet(host,old_signal,db_connected)
-            old_signal = new_signal
-            
-            if is_there_internet is None:
+           # is_there_internet,new_signal = modules.functions.check_internet(host,old_signal,db_connected)
+           # old_signal = new_signal
+            aux_db = modules.db_control.get_id_contentores(raspberry_id)
+
+            if aux_db is None:
                 db_connected = False
             else:
                 db_connected = True
-            
+                modules.functions.send_db_sensor_buffer(db_connected)
+                modules.functions.send_db_actuator_buffer(db_connected)
             
             time_date = time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())
             #Atuator logic function for chamber x
