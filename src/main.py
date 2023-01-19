@@ -82,23 +82,32 @@ if __name__ == '__main__':
         while True:
            # is_there_internet,new_signal = modules.functions.check_internet(host,old_signal,db_connected)
            # old_signal = new_signal
+            print("print 1")
+
             aux_db = modules.db_control.get_id_contentores(raspberry_id)
-            print("saiu")
+            print("print 2")
             if aux_db is None:
                 db_connected = False
             else:
                 db_connected = True
+                print("print 3")
                 modules.functions.send_db_sensor_buffer(db_connected)
+                print("print 4")
                 modules.functions.send_db_actuator_buffer(db_connected)
-            
+                print("print 5")
+            print("print 6")
             time_date = time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())
             #Atuator logic function for chamber x
             #modules.functions.atuator_logic(raspberry_id,relay_module,sensor_values,limits)
+            print("print 7")
 
             for i in range(len(contentor_ids)):
                 print("\n-------   contentor: ", contentor_ids[i],"   -------")
+                print("print 8")
                 timing_sens, timing_actu = modules.db_control.get_timings(contentor_ids[i], timing_sens, timing_actu)
+                print("print 9")
                 time_begin_sens[i], sensor[i] = modules.functions.atualiza_sensores(contentor_ids[i], sensor[i], time_date, time_begin_sens[i],COUNTRY,db_connected,timing_sens)
+                print("print 10")
                 modules.functions.control_atuatores(sensor[i], atuadores[i],contentor_ids[i],time_date,timing_actu,relay_module,db_connected)
 
 
