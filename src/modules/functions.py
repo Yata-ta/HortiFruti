@@ -776,17 +776,22 @@ def control_atuatores(sensores, atuadores,contentorid,time,timing_actu,relay_mod
     for atuador in atuadores:
         
         if(atuador.name == "Frigorifico"):
-                nivel = modules.db_control.get_nivel(atuador.id)
+                nivel = 0
+                if dbconnect == True:
+                    nivel = modules.db_control.get_nivel(atuador.id)
                 control_frigorifico(sensores,nivel,atuador,time,timing_actu,relay_module,dbconnect)
                 
         if(atuador.name == "Ventoinha"):
-                nivel = modules.db_control.get_nivel(atuador.id)
-                control_ventoinha(sensores,nivel,atuador,time,timing_actu,relay_module,dbconnect)
+                nivel = 0
+                if dbconnect == True:
+                    nivel = modules.db_control.get_nivel(atuador.id)                
+                    control_ventoinha(sensores,nivel,atuador,time,timing_actu,relay_module,dbconnect)
     for atuador in atuadores:      
              
         if(atuador.name == "Porta"):
-                nivel = modules.db_control.get_nivel(atuador.id)
-                print("Nivel ", nivel)
+                nivel = 0
+                if dbconnect == True:
+                    nivel = modules.db_control.get_nivel(atuador.id)                
                 control_porta(sensores,nivel,atuador,contentorid,time,timing_actu,relay_module,dbconnect)
 
     return
