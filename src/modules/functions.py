@@ -12,6 +12,7 @@ import logging
 import threading
 import atexit
 import time
+import random
 import serial
 import RPi.GPIO as GPIO
 import board
@@ -81,6 +82,13 @@ def create_sensors(names):
     # if needed add more sensors HERE:
 
     return Temperature_sensor, Humidity_sensor, CO2_sensor , O2_sensor, Pressure_sensor
+
+# def ens_simulation():
+#     CO2_sensor = Sensor(id=1,room=1,name="eCO2",min=700,max=1000)
+#     while True:
+#         CO2_sensor.generate_value()
+#         co2 = CO2_sensor.get_value()
+        
 
 def start_simulation(names,size):
     cl.init(autoreset=True)
@@ -201,8 +209,32 @@ def initialize_real_sensors():
         print("[" + cl.Fore.GREEN + "OK" + cl.Fore.WHITE + "]" + "- ENS160 connected")
 
     except:
-        print("[" + cl.Fore.RED + "NOT FOUND" + cl.Fore.WHITE + "]" + "- ENS160 not found")  
+        print("[" + cl.Fore.RED + "NOT FOUND" + cl.Fore.WHITE + "]" + "- ENS160 not found")
+        print("[" + cl.Fore.GREEN + "SIMULATED" + cl.Fore.WHITE + "]" + "- ENS160 simulated")
+        #start simulated CO2 value ona thread
+        # global ens160_sim
+        # ens160_sim = Thread(target=ens_simulation)
+        # ens160_sim.start()
         pass
+
+
+# def simulate_co2_sensor():
+#     try:
+#         CO2_sensor = Sensor(id=1,room=1,name="eCO2",min=700,max=1000)
+#         print("1")
+#         CO2_sensor.set_value(800.000)
+#         print("2")
+#         choice = random.randint(0, 1)
+#         print(f"choice:{choice}")
+#         if choice == 0:
+#             CO2_sensor.increase_value()*10
+#             return CO2_sensor.get_value()
+#         else:
+#             CO2_sensor.decrease_value()*10
+#             return CO2_sensor.get_value()
+#     except:
+#         print_r(f"ERROR-[17] : Unable to simulate CO2 values")
+
 
 
 #global previous
@@ -273,7 +305,6 @@ def read_real_sensors(Location: str):
     [3] - Pressure in hPa\n
     [4] - eC02 in ppm\n
     """
-
     try:
         # Calibration of pressure 
         if Location == "PT":
@@ -292,13 +323,14 @@ def read_real_sensors(Location: str):
         # Set the temperature compensation variable to the ambient temp
         # for best sensor calibration
         #ens160.temperature_compensation = bme680.temperature + temperature_offset
-        ens160.temperature_compensation = bme680.temperature + temperature_offset
+        #ens160.temperature_compensation = bme680.temperature + temperature_offset
 
         # Same for ambient relative humidity
         # ens160.humidity_compensation = bme680.humidity
-        ens160.humidity_compensation = bme680.relative_humidity
-
-        return bme680.temperature + temperature_offset, bme680.gas, bme680.relative_humidity, bme680.pressure, ens160.eCO2
+        #ens160.humidity_compensation = bme680.relative_humidity
+        eCO2 = random.randint(800.00, 880.00)
+        
+        return bme680.temperature + temperature_offset, bme680.gas, bme680.relative_humidity, bme680.pressure, eCO2
         
     except:
         print_r(f"ERROR-[5] : Unable to start real sensors ")
@@ -360,6 +392,7 @@ def termination_handler():
     time.sleep(0.5)
     print(cl.Fore.LIGHTRED_EX +".", end="")
     turn_off_serial()
+    #ens160_sim.join()
     time.sleep(0.5)
     print(cl.Fore.LIGHTRED_EX +".", end="")
     time.sleep(0.5)
@@ -513,11 +546,17 @@ def initial_components_test(call_number):
     res = input("(yes/no): ")
     if res.lower() == 'yes':
         print(f"*** STARTING CALL ON NUMBER: {call_number} ***")
+        alarm(alarm_pin,"on")
         call(call_number)
+        alarm(alarm_pin,"off")
         print("***DONE!***")
         print(f"*** SEND SMS to number: {call_number}")
+        alarm(alarm_pin,"on")
+        sendSMS("ALARM : TESTE DO ALARME NA CAMARA 1",call_number)
+        alarm(alarm_pin,"off")
         print("....IN WORK....")
         print("***DONE!***")
+        exit()
     else:
         exit()
 
