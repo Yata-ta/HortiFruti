@@ -43,7 +43,7 @@ if __name__ == '__main__':
         sys.exit(0)
     
     rtn = modules.functions.initialize_system()
-
+    rtn = modules.functions.initialize_system()
     #TODO retrive rooms (rapsberry_id) id from the database
     #using 1 for now..
     raspberry_id = 1
