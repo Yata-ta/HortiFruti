@@ -884,9 +884,9 @@ def muda_porta(valor, atuador, time,db_connected,relay_module):
     # manda comando pro arduino
     try:
         print(valor , atuador.state)
-        if(valor == 1 and atuador.state!=1):
+        if(valor == 0 and atuador.state!=0):
             modules.functions.actuate_servo()
-        elif (valor == 0 and atuador.state!=0):
+        elif (valor == 1 and atuador.state!=0):
             if (modules.functions.actuate_servo() == True):
                 # check if the door is open and
                 modules.functions.actuate_servo() # --> closes and
