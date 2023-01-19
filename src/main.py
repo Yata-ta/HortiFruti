@@ -83,12 +83,11 @@ if __name__ == '__main__':
            # is_there_internet,new_signal = modules.functions.check_internet(host,old_signal,db_connected)
            # old_signal = new_signal
             print("print 1")
-
-
-            aux_db = modules.db_control.get_id_contentores(raspberry_id)
-            print("print 2")
-            if aux_db is None:
-                db_connected = False
+            i=0
+            while True:
+                i = i+1
+                aux_db = modules.db_control.get_id_contentores(raspberry_id)
+                print("print", i,aux_db)
             else:
                 db_connected = True
                 print("print 3")
