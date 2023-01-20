@@ -75,7 +75,7 @@ if __name__ == '__main__':
         while contentor_ids == None:
             contentor_ids = modules.functions.verifica_contentor(raspberry_id)
             cont_test = cont_test + 1
-            if cont_test > 10:
+            if cont_test > 1:
                 contentor_ids = [1]
                 break
 
