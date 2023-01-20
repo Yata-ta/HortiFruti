@@ -65,16 +65,21 @@ if __name__ == '__main__':
 
         
         print(f"Starting local execution...on room {raspberry_id}")
-        ini_error = modules.functions.initialize_real_sensors()
+        modules.functions.initialize_real_sensors()
         relay_module = modules.classes.Relay(raspberry_id) # relay module of room 1
         print("Getting database information...")
-        
+
+        cont_test = 0
         while contentor_ids == None:
             contentor_ids = modules.functions.verifica_contentor(raspberry_id)
+            cont_test = cont_test + 1
+            if cont_test > 10:
+                break
+
         try:
             for i in range(len(contentor_ids)):
-                sensor.append (modules.functions.define_sensors(contentor_ids[i],db_connected))
-                atuadores.append (modules.functions.define_actuators(contentor_ids[i],db_connected))
+                sensor.append(modules.functions.define_sensors(contentor_ids[i],db_connected))
+                atuadores.append(modules.functions.define_actuators(contentor_ids[i],db_connected))
             print("[" + cl.Fore.GREEN + "OK" + cl.Fore.WHITE + "]" + "- Connected to the database")
             old_signal = "ONLINE"
         except:
