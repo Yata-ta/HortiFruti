@@ -765,6 +765,8 @@ def define_actuators(contentorId,db_connected):
         return actuators
 
     else:
+
+        print("ENTROU AQUIII")
         df_actuators = pd.read_csv('actuators.csv')
 
         for i in range(df_actuators.shape[0]):
