@@ -55,6 +55,8 @@ if __name__ == '__main__':
     else:
         db_connected = True
 
+    print("DB CONNECTED:  ", db_connected)
+
 
     if check_params == 3:
         modules.functions.initial_components_test(call_number)
@@ -81,6 +83,7 @@ if __name__ == '__main__':
             for i in range(len(contentor_ids)):
                 sensor.append(modules.functions.define_sensors(contentor_ids[i],db_connected))
                 atuadores.append(modules.functions.define_actuators(contentor_ids[i],db_connected))
+                print(atuadores)
             print("[" + cl.Fore.GREEN + "OK" + cl.Fore.WHITE + "]" + "- Connected to the database")
             old_signal = "ONLINE"
         except:
