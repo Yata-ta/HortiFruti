@@ -741,6 +741,8 @@ def define_actuators(contentorId,db_connected):
     actuators = []
     data_df = []
 
+    print("DB_connected: ", db_connected)
+
     if db_connected is True:
 
         # Open db connection
