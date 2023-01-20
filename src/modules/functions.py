@@ -690,6 +690,8 @@ def define_sensors(contentorId,db_connected):
 
             sensors.append(sensor_aux)
 
+        print("OS SENSORES ESTAO AQUI")
+
         return sensors
 
     # Add the sensor values to the db and also to the buffer (local memory)
@@ -769,6 +771,7 @@ def define_actuators(contentorId,db_connected):
         print("ENTROU AQUIII")
         df_actuators = pd.read_csv('actuators.csv')
 
+        print("AQUIIII11111")
         for i in range(df_actuators.shape[0]):
             actuator_aux = modules.classes.Actuator(-1, contentorId, 'ini', 0, 0)
 
@@ -778,7 +781,7 @@ def define_actuators(contentorId,db_connected):
             actuator_aux.dashboard = df_actuators[i]['dashboard']
             actuator_aux.time_passed = 0
             actuators.append(actuator_aux)
-        print("AQUIIII")
+        print("AQUIIII2222")
         print(actuators)
 
         return actuators
