@@ -262,14 +262,13 @@ def set_value_sensor( sensid, tempo, valor):
     result = executequery(db, connection, query)
 
     query = "UPDATE up201801019.sensor SET valor_atual = "+ str(valor) + " WHERE sensid = " + str(sensid) + ";"
-    print
     result = executequery(db, connection, query)
 
     
     # Close db connection
     if connection is not None:
         connection.close()
-        print('Database connection closed.')
+        #print('Database connection closed.')
 
     return result
 
@@ -294,11 +293,15 @@ def set_value_atuador( atuadorid,  tempo,valor):
 
 #               INSERE ALARME
 
-def add_alarm(db, connection, contentorid, tempo, prioridade, texto):
+def add_alarm(contentorid, tempo, prioridade, texto):
+
+    db, connection = connect(DB())
 
     query = "INSERT INTO up201801019.alarme(data_hora, prioridade, descrição, contentorid) VALUES ('"+ tempo + "',"+ str(prioridade) +" ,'" + texto +"', "+ str(contentorid) + ");"
-    print(query)
+
     result = executequery(db, connection, query)
+    if connection is not None:
+        connection.close()
 
     return result
 

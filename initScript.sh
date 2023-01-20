@@ -26,7 +26,7 @@ yes | sudo pip install --upgrade pigpiod
 #####################################################
 
 echo Raspberry Username:
-read USERNAME
+#read USERNAME
 
 
 
@@ -35,27 +35,27 @@ read USERNAME
 #####################################################
 
 
-if [ ! -d "/home/pedro/local/ZE/final2" ]; then
+if [ ! -d "/home/gabriel/shared/myfork/HortiFruti" ]; then
     ###  $DIR does NOT exists ### 
     #mkdir /home/$USERNAME/HortiFruiti
-    mkdir /home/pedro/local/ZE/final2
+    mkdir /home/gabriel/shared/myfork/HortiFruti
     
 fi
 
 #/home/pedro/local/ZE/test
 #/home/$USERNAME/HortiFruiti
 
-if [ ! -d "/home/pedro/local/ZE/final2/.git" ]; then
+if [ ! -d "/home/gabriel/shared/myfork/HortiFruti/.git" ]; then
     
-    sudo git clone https://github.com/Yata-ta/HortiFruti.git /home/pedro/local/ZE/final2
+    sudo git clone https://github.com/Yata-ta/HortiFruti.git /home/gabriel/shared/myfork/HortiFruti
     #sudo git clone git@github.com:Yata-ta/HortiFruti.git /home/jose/bashScript_test
     #sudo git clone https://github.com/Embedded-System-yatata/LOL.git /home/pedro/local/ZE/final2
     
-    cd /home/pedro/local/ZE/final2
+    cd /home/gabriel/shared/myfork/HortiFruti
 else
     #cd /home/pedro/local/ZE/test
-    cd /home/pedro/local/ZE/final2
-    sudo git pull https://github.com/Yata-ta/HortiFruti.git
+    cd /home/gabriel/shared/myfork/HortiFruti
+    #sudo git pull https://github.com/Yata-ta/HortiFruti.git
     #sudo git pull https://github.com/Embedded-System-yatata/LOL.git
 
 fi
@@ -90,6 +90,6 @@ sudo pigpiod
 
 # Run main.py
 #####################################################
-cd /home/pedro/local/ZE/final2/src
-sudo python3 main.py DEBUG
-#sudo python3 main.py NORMAL
+cd /home/gabriel/shared/myfork/HortiFruti/src
+#sudo python3 main.py DEBUG
+sudo python3 main.py NORMAL
