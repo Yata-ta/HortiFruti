@@ -781,8 +781,11 @@ def define_actuators(contentorId,db_connected):
             print("AQUIIII55555")
             actuator_aux.id = df_actuators.iloc[i]['id']
             actuator_aux.dashboard = df_actuators[i]['dashboard']
+            print("AQUIIII66666")
             actuator_aux.time_passed = 0
+            print("AQUIIII777777")
             actuators.append(actuator_aux)
+            print("AQUIIII88888")
         print("AQUIIII2222")
         print(actuators)
 
