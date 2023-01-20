@@ -780,7 +780,7 @@ def define_actuators(contentorId,db_connected):
             actuator_aux.value = df_actuators.iloc[i]['Current_Value']
             print("AQUIIII55555")
             actuator_aux.id = df_actuators.iloc[i]['id']
-            actuator_aux.dashboard = df_actuators[i]['dashboard']
+            actuator_aux.dashboard = df_actuators.iloc[i]['dashboard']
             print("AQUIIII66666")
             actuator_aux.time_passed = 0
             print("AQUIIII777777")
