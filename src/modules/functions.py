@@ -266,6 +266,8 @@ def get_OxygenValues() -> float:
     return 0.0
 
 def read_real_sensors(Location: str):
+
+    # print(bme680.sea_level_pressure)
     """
     Read data from the sensors\n
     @param\n
@@ -295,14 +297,22 @@ def read_real_sensors(Location: str):
 
         # Set the temperature compensation variable to the ambient temp
         # for best sensor calibration
-        #ens160.temperature_compensation = bme680.temperature + temperature_offset
-        ens160.temperature_compensation = bme680.temperature + temperature_offset
+        # ens160.temperature_compensation = bme680.temperature + temperature_offset
+        # ens160.temperature_compensation = bme680.temperature + temperature_offset
 
         # Same for ambient relative humidity
         # ens160.humidity_compensation = bme680.humidity
-        ens160.humidity_compensation = bme680.relative_humidity
+        # ens160.humidity_compensation = bme680.relative_humidity
 
-        return bme680.temperature + temperature_offset, bme680.gas, bme680.relative_humidity, bme680.pressure, ens160.eCO2
+        # Real value C02
+        # ens160.eCO2
+
+        # Simulated value for the CO2
+        sim_C02 = random.randint(350, 450)
+
+        print(sim_C02)
+
+        return bme680.temperature + temperature_offset, bme680.gas, bme680.relative_humidity, bme680.pressure, sim_C02
         
     except:
         print_r(f"ERROR-[5] : Unable to start real sensors ")
@@ -581,7 +591,8 @@ def get_sensors(sensors,COUNTRY):  #do arduino
             sensor.value = co2
             print('The new value from sensor ', sensor.name,' is ', sensor.value)
         elif (sensor.name =="O2"):
-            sensor.value = get_OxygenValues()
+            # sensor.value = get_OxygenValues()
+            sensor.value = 20.69
             print('The new value from sensor ', sensor.name,' is ', sensor.value)
         elif (sensor.name =="humidade"):
             sensor.value = humidade
@@ -772,6 +783,10 @@ def define_actuators(contentorId,db_connected):
 
 def control_atuatores(sensores, atuadores,contentorid,time,timing_actu,relay_module,dbconnect): # todos
 
+    try:
+        atuadores = define_actuators(contentorid)
+    except:
+        print('Could not connect with the db')
 
     for atuador in atuadores:
         
@@ -905,16 +920,42 @@ def muda_porta(valor, atuador, time,db_connected,relay_module):
     return
 
 def control_frigorifico(sensores, nivel, atuador,time_day,timing_actu,relay_module,db_connected):
-    
+
+    call_number = +351936746058
+    contentor_id = 1
+
     temp, max_, min = get_temperatura_info(sensores)
+    print(max_, "      ", min)
     if(nivel == 0):         # quem manda é a raspberry
-      if(timing_actu < time.time() - atuador.time_passed): 
+      if(timing_actu < time.time() - atuador.time_passed):
         if(temp > max_):
+            print("Temp maior do que deveria")
             muda_frigorifico(1,atuador,time_day,db_connected,relay_module)
             atuador.time_passed = time.time()
+
+            if(temp > max_ + 2 and temp< max_ + 4):
+                # alarm_function(time_day, db_connected, call_number, contentor_id , 2)
+                print("Alarme")
+
+            elif (temp > max_ + 4):
+                # alarm_function(time_day, db_connected, call_number, contentor_id, 3)
+                print("Alarme")
+            else:
+                print("ALARMEEEE")
+
         elif(temp < min):
+            print("Temp menor do que deveria")
             muda_frigorifico(0,atuador,time_day,db_connected,relay_module)
             atuador.time_passed = time.time()
+
+            if (temp < min - 2 and temp > min - 4):
+                # alarm_function(time_day, db_connected, call_number, contentor_id, -2)
+                print("Alarme")
+
+            elif (temp < min -4):
+                # alarm_function(time_day, db_connected, call_number, contentor_id, -3)
+                print("Alarme")
+
     elif(nivel != 0):
         muda_frigorifico(max(nivel,0),atuador,time_day,db_connected,relay_module)
 
@@ -980,3 +1021,44 @@ def verifica_contentor( raspberry_id):
 def process_and_send(db_connected):
         send_db_sensor_buffer(db_connected)
         send_db_actuator_buffer(db_connected)
+
+def alarm_function(time_date, is_there_internet, call_number, room: int, prioridade, temp_value):
+    """
+    Controls the room specific relays actuator based on the limits values coming from the database\n
+    [0] - Temperature in celsius\n
+    [1] - Gas O2\n
+    [2] - Humidity\n
+    [3] - Pressure in hPa\n
+    [4] - eC02 in ppm\n
+    relay_module -> relay object for the specific room\n
+    real_values -> list of sensor values\n
+    limits_values -> list of the limits coming from the database:
+    [temp_max,tem_min,hum_max,hum_min,o2_max,o2_min,Co2_max,CO2_min,press_max,press_min]
+"""
+    if prioridade ==2:
+        sendSMS("HORTIFRUTI: informamos que a temperatura na camara " + str(room) + " ficou elevada: " + str(
+            temp_value) + "graus.", call_number)
+
+        if not (is_there_internet):
+            modules.db_control.add_alarm(room, time_date, 2, "temperatura = " + temp_value)
+    elif prioridade == 3:
+        sendSMS("HORTIFRUTI: informamos que a temperatura na camara " + str(room) + " ficou muito elevada: " + str(
+            temp_value) + "graus.", call_number)
+        wait_for_A9()
+        call(call_number, "bill.mp3")
+        if not (is_there_internet):
+            modules.database.add_alarm(room, time_date, 3, "temperatura = " + temp_value)
+
+    if prioridade == -2:
+        sendSMS("HORTIFRUTI: informamos que a temperatura na camara " + str(room) + " ficou baixa: " + str(
+            temp_value) + "graus.", call_number)
+
+        if not (is_there_internet):
+            modules.db_control.add_alarm(room, time_date, 2, "temperatura = " + temp_value)
+    elif prioridade == -3:
+        sendSMS("HORTIFRUTI: informamos que a temperatura na camara " + str(room) + " ficou muito baixa: " + str(
+            temp_value) + "graus.", call_number)
+        wait_for_A9()
+        call(call_number, "bill.mp3")
+        if not (is_there_internet):
+            modules.database.add_alarm(room, time_date, 3, "temperatura = " + temp_value)

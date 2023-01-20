@@ -36,6 +36,8 @@ host = "1.1.1.1" # local DNS server
 
 if __name__ == '__main__':
 
+    print("ESTAMOS AQUIII")
+
     check_params = modules.functions.start(sys.argv)
  
 
@@ -63,7 +65,7 @@ if __name__ == '__main__':
 
         
         print(f"Starting local execution...on room {raspberry_id}")
-        modules.functions.initialize_real_sensors()
+        ini_error = modules.functions.initialize_real_sensors()
         relay_module = modules.classes.Relay(raspberry_id) # relay module of room 1
         print("Getting database information...")
         
