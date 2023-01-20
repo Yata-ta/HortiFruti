@@ -776,6 +776,8 @@ def define_actuators(contentorId,db_connected):
             actuator_aux.dashboard = df_actuators[i]['dashboard']
             actuator_aux.time_passed = 0
             actuators.append(actuator_aux)
+        print("AQUIIII")
+        print(actuators)
 
         return actuators
 
