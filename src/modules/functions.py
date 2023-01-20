@@ -774,9 +774,11 @@ def define_actuators(contentorId,db_connected):
         print("AQUIIII11111")
         for i in range(df_actuators.shape[0]):
             actuator_aux = modules.classes.Actuator(-1, contentorId, 'ini', 0, 0)
-
+            print("AQUIIII33333")
             actuator_aux.name = df_actuators.iloc[i]['Type']
+            print("AQUIIII44444")
             actuator_aux.value = df_actuators.iloc[i]['Current_Value']
+            print("AQUIIII55555")
             actuator_aux.id = df_actuators.iloc[i]['id']
             actuator_aux.dashboard = df_actuators[i]['dashboard']
             actuator_aux.time_passed = 0
