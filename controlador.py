@@ -408,7 +408,7 @@ for i in range(len(contentor_ids)):
     
 while 1:
                 # limpar terminal
-    os.system('cls||clear')
+   # os.system('cls||clear')
 
     aux_db = get_id_contentores(raspberry_id)
     if aux_db is None:
